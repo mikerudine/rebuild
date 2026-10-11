@@ -1,0 +1,53 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getUi } from '@/i18n/ui';
+import { SDMX_API_BASE } from '@/data/sdmx-catalog';
+
+const lang = 'uk';
+const t = getUi(lang);
+---
+
+<BaseLayout lang={lang} title={t.methodology.title}>
+  <article class="prose">
+    <h1>{t.methodology.title}</h1>
+    <p class="lead">{t.methodology.lead}</p>
+
+    <section>
+      <h2>Держстат SDMX</h2>
+      <ul>
+        <li>Каталог dataflow: <code>{SDMX_API_BASE}/dataflow/all/all/latest</code> (125 потоків станом на перевірку 2026-10-11).</li>
+        <li>Доступність регіонів: <code>/availableconstraint/&lt;DF&gt;/all/all/REGION</code>.</li>
+        <li>Дані: <code>/data/&lt;DF&gt;/&lt;key&gt;?startPeriod=YYYY</code>. Ключ не може починатися з «.» — спочатку код показника (<code>ACT_ENTRP</code>, <code>REG_LEG_ENT</code> тощо).</li>
+        <li>Фільтр <code>c[REGION]=</code> ігнорується API; CSV через Accept часто дає 404 — використовуємо XML.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Інші джерела (кейси)</h2>
+      <ul>
+        <li>Державні та регіональні ЗМІ, сайти громад, матеріали SHABO — з прямими посиланнями на сторінках кейсів.</li>
+        <li>
+          <strong>api.openbudget.gov.ua</strong> — очікуване джерело бюджетів громад; з інфраструктури збірки не перевірено (можливе гео-обмеження). Не використовуємо цифри бюджету без успішної верифікації.
+        </li>
+        <li>decentralization.gov.ua, Prozorro, Opendatabot — кандидати для наступних ітерацій.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Обмеження</h2>
+      <ul>
+        <li><strong>Населення села/громади</strong> у SDMX не знайдено; <code>DF_POPULATION_STRUCTURE</code> — рівень області (1989–2025).</li>
+        <li>Війна: дані після 2022 частково без тимчасово окупованих територій (примітки в metadata наборів).</li>
+        <li>Реформа 2020: зміни меж громад; коди КАТОТТГ vs історичні КОАТУУ.</li>
+        <li>Кожен графік на сайті має JSON з <code>source</code>, <code>fetched_at</code> і URL запиту; без джерела цифра не публікується.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Пайплайн збірки</h2>
+      <p>
+        Перед <code>astro build</code> скрипт <code>scripts/fetch-sdmx.ts</code> завантажує підтверджені ряди в <code>public/data/</code> і копіює їх для імпорту в сторінки. GitHub Actions деплоїть статичний сайт на Pages з <code>base: /rebuild/</code>.
+      </p>
+    </section>
+  </article>
+</BaseLayout>

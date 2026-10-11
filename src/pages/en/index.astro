@@ -1,0 +1,35 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ChartFigure from '@/components/ChartFigure.astro';
+import { getUi } from '@/i18n/ui';
+import { localizedPath } from '@/i18n/utils';
+import chartData from '@/data/generated/yasinia-business-register.json';
+
+const lang = 'en';
+const t = getUi(lang);
+const base = import.meta.env.BASE_URL;
+const dataUrl = `${base}data/yasinia-business-register.json`;
+const source = chartData.source;
+---
+
+<BaseLayout lang={lang} title={t.nav.home} description={t.home.lead}>
+  <section class="hero">
+    <h1>{t.home.title}</h1>
+    <p class="lead">{t.home.lead}</p>
+    <div class="cta-row">
+      <a class="button button--primary" href={localizedPath('/cases/', lang)}>{t.home.ctaCases}</a>
+      <a class="button button--secondary" href={localizedPath('/data/', lang)}>{t.home.ctaData}</a>
+    </div>
+  </section>
+
+  <ChartFigure
+    lang={lang}
+    title={t.home.featuredChartTitle}
+    chartId="home-yasinia-chart-en"
+    dataUrl={dataUrl}
+    sourceLabel={`${source.provider} · ${source.dataflow_id}`}
+    sourceUrl={source.query_url}
+    fetchedAt={chartData.fetched_at}
+    note={t.home.featuredChartNote}
+  />
+</BaseLayout>

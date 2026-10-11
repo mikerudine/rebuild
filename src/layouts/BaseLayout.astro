@@ -1,0 +1,56 @@
+---
+import '@/styles/global.css';
+import type { Lang } from '@/i18n/ui';
+import { getUi } from '@/i18n/ui';
+import { localizedPath, switchLangPath } from '@/i18n/utils';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description?: string;
+}
+
+const { lang, title, description } = Astro.props;
+const t = getUi(lang);
+const otherLang = lang === 'uk' ? 'en' : 'uk';
+const pageTitle = `${title} · ${t.siteName}`;
+const desc = description ?? t.siteTagline;
+const base = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={desc} />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href={localizedPath('/', lang)}>
+          {t.siteName}
+          <span>{t.siteTagline}</span>
+        </a>
+        <nav class="site-nav" aria-label="Main">
+          <a href={localizedPath('/', lang)} aria-current={Astro.url.pathname.endsWith('/') && !Astro.url.pathname.includes('/cases') ? 'page' : undefined}>{t.nav.home}</a>
+          <a href={localizedPath('/cases/', lang)} aria-current={Astro.url.pathname.includes('/cases') ? 'page' : undefined}>{t.nav.cases}</a>
+          <a href={localizedPath('/data/', lang)} aria-current={Astro.url.pathname.includes('/data') ? 'page' : undefined}>{t.nav.data}</a>
+          <a href={localizedPath('/methodology/', lang)} aria-current={Astro.url.pathname.includes('/methodology') ? 'page' : undefined}>{t.nav.methodology}</a>
+        </nav>
+        <a class="lang-switch" href={switchLangPath(Astro.url, otherLang)} hreflang={otherLang}>
+          {t.langSwitch}
+        </a>
+      </div>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <p>{t.footer}</p>
+      <p>{t.license}</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,58 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ChartFigure from '@/components/ChartFigure.astro';
+import { getUi } from '@/i18n/ui';
+import { sdmxCatalog, SDMX_API_BASE } from '@/data/sdmx-catalog';
+import chartData from '@/data/generated/yasinia-business-register.json';
+
+const lang = 'en';
+const t = getUi(lang);
+const base = import.meta.env.BASE_URL;
+const dataUrl = `${base}data/yasinia-business-register.json`;
+const source = chartData.source;
+---
+
+<BaseLayout lang={lang} title={t.data.title}>
+  <h1>{t.data.title}</h1>
+  <p class="lead">{t.data.lead}</p>
+
+  <p>
+    SDMX API base:{' '}
+    <a href={SDMX_API_BASE} rel="noopener noreferrer">{SDMX_API_BASE}</a>.
+    The <code>REGION</code> dimension uses KATOTTG (31,753 codes). No dataflow exposes individual villages; the business register reaches <strong>hromada</strong> level (1,633 codes).
+  </p>
+
+  <ChartFigure
+    lang={lang}
+    title={t.data.chartTitle}
+    chartId="data-yasinia-chart-en"
+    dataUrl={dataUrl}
+    sourceLabel={`${source.provider} · ${source.dataflow_id}`}
+    sourceUrl={source.query_url}
+    fetchedAt={chartData.fetched_at}
+  />
+
+  <h2>{t.data.catalogTitle}</h2>
+  <div style="overflow-x: auto;">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Dataflow ID</th>
+          <th>Title</th>
+          <th>Lowest geography</th>
+          <th>Period (verified)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {sdmxCatalog.map((row) => (
+          <tr>
+            <td><code>{row.id}</code></td>
+            <td>{row.titleEn}</td>
+            <td>{row.lowestGeoEn}</td>
+            <td>{row.yearsNote}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</BaseLayout>

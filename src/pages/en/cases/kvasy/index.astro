@@ -1,0 +1,54 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { localizedPath } from '@/i18n/utils';
+
+const lang = 'en';
+---
+
+<BaseLayout lang={lang} title="Kvasy">
+  <article class="prose">
+    <h1>Kvasy</h1>
+    <p class="lead">
+      Village in <strong>Yasinia territorial hromada</strong> (Rakhiv rayon, Zakarpattia oblast).
+      Settlement KATOTTG from SDMX research: <code>UA21060070020094987</code>; hromada —
+      <code>UA21060070000049340</code>.
+    </p>
+
+    <section>
+      <h2>Context</h2>
+      <ul>
+        <li>Mineral water (burkut), spa tourism, Hirska Tysa sanatorium.</li>
+        <li>Youth NGO projects: station lighting, tourist information centre (per linked media).</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Recognition (no unsourced population figures)</h2>
+      <ul>
+        <li>Finalist of «Incredible Villages of Ukraine 2022» (per linked coverage).</li>
+        <li>Nomination for UNWTO Best Tourism Villages 2024 (per tourism press — see sources).</li>
+      </ul>
+      <p>
+        Derzhstat SDMX has <strong>no</strong> population counts for individual villages or hromadas.
+        See the Data page for hromada-level business-register indicators for Yasinia hromada, which includes Kvasy.
+      </p>
+    </section>
+
+    <section class="sources">
+      <h2>Sources</h2>
+      <ul>
+        <li>
+          <a href="http://ukurier.gov.ua/uk/articles/zhittya-v-girskij-glibinci-zminyuyut-nebajduzhi/p/" rel="noopener noreferrer">Ukrainskyi Kurier</a>
+        </li>
+        <li>
+          <a href="https://tourinform.org.ua/selo-kvasy-potentsijnyj-peremozhets-konkursu-the-best-tourism-villages" rel="noopener noreferrer">Tourinform — Best Tourism Villages</a>
+        </li>
+        <li>
+          <a href="https://ua-reporter.com/uk/news/cilyushcha-voda-u-kvasah-na-zakarpatti-vybyvaye-z-pid-zemli-navit-v-obiystyah-selyan-foto-video" rel="noopener noreferrer">UA-Reporter — mineral water in Kvasy</a>
+        </li>
+      </ul>
+    </section>
+
+    <p><a href={localizedPath('/cases/', lang)}>← All cases</a></p>
+  </article>
+</BaseLayout>

@@ -1,0 +1,54 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { localizedPath } from '@/i18n/utils';
+
+const lang = 'uk';
+---
+
+<BaseLayout lang={lang} title="Кваси">
+  <article class="prose">
+    <h1>Кваси</h1>
+    <p class="lead">
+      Село в <strong>Ясіняській територіальній громаді</strong> (Рахівський район, Закарпатська область).
+      Код КАТОТТГ населеного пункту в дослідженні SDMX: <code>UA21060070020094987</code>; громади —
+      <code>UA21060070000049340</code>.
+    </p>
+
+    <section>
+      <h2>Контекст</h2>
+      <ul>
+        <li>Мінеральна вода (буркут), SPA-туризм, санаторій «Гірська Тиса».</li>
+        <li>Молодіжні NGO-проєкти: освітлення станції, туристичний інформаційний центр (за матеріалами ЗМІ нижче).</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Визнання (без цифр демографії)</h2>
+      <ul>
+        <li>Фіналіст конкурсу «Неймовірні села України 2022» (за публікаціями про село).</li>
+        <li>Номінація на UNWTO Best Tourism Villages 2024 (за матеріалами туроператорів/ЗМІ — див. джерела).</li>
+      </ul>
+      <p>
+        У відкритому SDMX Держстату <strong>немає</strong> чисельності населення для окремого села чи громади;
+        на сторінці «Дані» наведено економічні показники рівня громади (бізнес-реєстр), релевантні для всієї Ясіняської ТГ, куди входить Кваси.
+      </p>
+    </section>
+
+    <section class="sources">
+      <h2>Джерела</h2>
+      <ul>
+        <li>
+          <a href="http://ukurier.gov.ua/uk/articles/zhittya-v-girskij-glibinci-zminyuyut-nebajduzhi/p/" rel="noopener noreferrer">Урядовий кур’єр — про життя та зміни в гірському селі</a>
+        </li>
+        <li>
+          <a href="https://tourinform.org.ua/selo-kvasy-potentsijnyj-peremozhets-konkursu-the-best-tourism-villages" rel="noopener noreferrer">Tourinform — Кваси та конкурс Best Tourism Villages</a>
+        </li>
+        <li>
+          <a href="https://ua-reporter.com/uk/news/cilyushcha-voda-u-kvasah-na-zakarpatti-vybyvaye-z-pid-zemli-navit-v-obiystyah-selyan-foto-video" rel="noopener noreferrer">UA-Reporter — цілюща вода в Квасах</a>
+        </li>
+      </ul>
+    </section>
+
+    <p><a href={localizedPath('/cases/', lang)}>← Усі кейси</a></p>
+  </article>
+</BaseLayout>
