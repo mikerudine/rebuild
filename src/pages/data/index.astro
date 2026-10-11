@@ -17,6 +17,15 @@ const source = chartData.source;
   <p class="lead">{t.data.lead}</p>
 
   <p>
+    {t.data.kaggleLead}{' '}
+    <a href="https://www.kaggle.com/datasets/mikerudine/rebuild-ukraine-hromada-growth" rel="noopener noreferrer">
+      rebuild-ukraine-hromada-growth
+    </a>
+    ({lang === 'uk' ? 'CSV з рейтингами на' : 'CSV rankings on'}{' '}
+    <a href={`${base}data/hromada_growth_ranked.csv`}>hromada_growth_ranked.csv</a>).
+  </p>
+
+  <p>
     Базовий URL SDMX API:{' '}
     <a href={SDMX_API_BASE} rel="noopener noreferrer">{SDMX_API_BASE}</a>.
     Вимір <code>REGION</code> використовує довідник КАТОТТГ (31 753 коди). Жоден dataflow не дає рівня окремого села; найнижчий рівень для бізнес-реєстру — <strong>громада</strong> (1 633 коди).

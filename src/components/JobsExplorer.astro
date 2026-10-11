@@ -1,0 +1,145 @@
+---
+import type { Lang } from '@/i18n/ui';
+import { workuaCityLabels, WORKUA_STAT_URL } from '@/data/workua-cities';
+
+interface Props {
+  lang: Lang;
+  dataUrl: string;
+}
+
+const { lang, dataUrl } = Astro.props;
+---
+
+<div class="jobs-explorer" data-lang={lang} data-url={dataUrl}>
+  <p class="lead">
+    {lang === 'uk'
+      ? 'Місячні медіанні зарплати в оголошеннях та кількість вакансій на work.ua по містах (жовтень 2023 — жовтень 2026). Джерело агрегатів — '
+      : 'Monthly median advertised salaries and vacancy counts on work.ua by city (October 2023 – October 2026). Aggregates from '}
+    <a href={WORKUA_STAT_URL} rel="noopener noreferrer">work.ua/stat</a>.
+  </p>
+
+  <label class="city-picker">
+    {lang === 'uk' ? 'Місто:' : 'City:'}
+    <select id="jobs-city-select"></select>
+  </label>
+
+  <div class="chart-block">
+    <h3>{lang === 'uk' ? 'Медіанна зарплата в оголошеннях, грн' : 'Median advertised salary, UAH'}</h3>
+    <div id="jobs-salary-chart" class="plot-target"></div>
+  </div>
+  <div class="chart-block">
+    <h3>{lang === 'uk' ? 'Кількість вакансій' : 'Vacancy count'}</h3>
+    <div id="jobs-count-chart" class="plot-target"></div>
+  </div>
+  <div class="chart-block">
+    <h3>{lang === 'uk' ? 'Зміна за 3 роки (жов 2023 → жов 2026)' : 'Three-year change (Oct 2023 → Oct 2026)'}</h3>
+    <div id="jobs-change-chart" class="plot-target"></div>
+    <p class="chart-meta" id="jobs-change-caption"></p>
+  </div>
+
+  <p class="chart-meta">
+    {lang === 'uk' ? 'Дані:' : 'Data:'}{' '}
+    <a href={dataUrl} download>workua_city_monthly.csv</a>
+  </p>
+</div>
+
+<script define:vars={{ workuaCityLabels, WORKUA_STAT_URL }}>
+  import { parseCsv } from '@/lib/csv';
+  import { renderLineChart, renderGroupedBars } from '@/lib/plot-charts';
+
+  const START = '2023-10';
+  const END = '2026-10';
+
+  let byCity = new Map();
+
+  function cityLabel(slug, lang) {
+    const entry = workuaCityLabels[slug];
+    if (entry) return lang === 'uk' ? entry.uk : entry.en;
+    return slug;
+  }
+
+  function pctChange(from, to) {
+    if (!from || !to) return null;
+    return ((to - from) / from) * 100;
+  }
+
+  function renderCity(slug, lang) {
+    const rows = byCity.get(slug) || [];
+    const salary = rows.map((r) => ({ x: r.month, y: Number(r.median_salary_uah) }));
+    const jobs = rows.map((r) => ({ x: r.month, y: Number(r.job_count) }));
+    renderLineChart(document.getElementById('jobs-salary-chart'), salary, {
+      yLabel: lang === 'uk' ? 'грн' : 'UAH',
+      color: '#0057b7',
+    });
+    renderLineChart(document.getElementById('jobs-count-chart'), jobs, {
+      yLabel: lang === 'uk' ? 'вакансій' : 'vacancies',
+      color: '#2a9d8f',
+    });
+
+    const start = rows.find((r) => r.month === START);
+    const end = rows.find((r) => r.month === END);
+    if (start && end) {
+      const salPct = pctChange(Number(start.median_salary_uah), Number(end.median_salary_uah));
+      const jobPct = pctChange(Number(start.job_count), Number(end.job_count));
+      renderGroupedBars(
+        document.getElementById('jobs-change-chart'),
+        [
+          {
+            group: lang === 'uk' ? 'Зарплата' : 'Salary',
+            metric: '%',
+            value: salPct,
+          },
+          {
+            group: lang === 'uk' ? 'Вакансії' : 'Vacancies',
+            metric: '%',
+            value: jobPct,
+          },
+        ],
+        { yLabel: lang === 'uk' ? 'Зміна, %' : 'Change, %' },
+      );
+      document.getElementById('jobs-change-caption').textContent =
+        lang === 'uk'
+          ? `${cityLabel(slug, lang)}: ${start.median_salary_uah}→${end.median_salary_uah} грн (${salPct?.toFixed(1)}%); вакансії ${start.job_count}→${end.job_count} (${jobPct?.toFixed(1)}%).`
+          : `${cityLabel(slug, lang)}: salary ${start.median_salary_uah}→${end.median_salary_uah} UAH (${salPct?.toFixed(1)}%); vacancies ${start.job_count}→${end.job_count} (${jobPct?.toFixed(1)}%).`;
+    }
+  }
+
+  async function init() {
+    const root = document.querySelector('.jobs-explorer');
+    const lang = root?.dataset.lang || 'uk';
+    const text = await fetch(root.dataset.url).then((r) => r.text());
+    const rows = parseCsv(text).filter((r) => r.city_slug && r.city_slug !== 'city_slug');
+    for (const r of rows) {
+      if (!byCity.has(r.city_slug)) byCity.set(r.city_slug, []);
+      byCity.get(r.city_slug).push(r);
+    }
+    for (const [, list] of byCity) list.sort((a, b) => a.month.localeCompare(b.month));
+
+    const select = document.getElementById('jobs-city-select');
+    const slugs = [...byCity.keys()].sort((a, b) => cityLabel(a, lang).localeCompare(cityLabel(b, lang)));
+    for (const slug of slugs) {
+      const opt = document.createElement('option');
+      opt.value = slug;
+      opt.textContent = cityLabel(slug, lang);
+      select.appendChild(opt);
+    }
+    select.value = byCity.has('kyiv') ? 'kyiv' : slugs[0];
+    select.addEventListener('change', () => renderCity(select.value, lang));
+    renderCity(select.value, lang);
+  }
+
+  init();
+</script>
+
+<style>
+  .city-picker {
+    display: block;
+    margin: 1rem 0 1.5rem;
+    font-size: 0.95rem;
+  }
+  .city-picker select {
+    margin-left: 0.5rem;
+    padding: 0.35rem 0.5rem;
+    min-width: 12rem;
+  }
+</style>

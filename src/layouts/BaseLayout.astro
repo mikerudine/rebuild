@@ -16,6 +16,18 @@ const otherLang = lang === 'uk' ? 'en' : 'uk';
 const pageTitle = `${title} · ${t.siteName}`;
 const desc = description ?? t.siteTagline;
 const base = import.meta.env.BASE_URL;
+
+function navCurrent(pathSegment: string, pathname: string): 'page' | undefined {
+  const seg = pathSegment.replace(/\/$/, '');
+  if (seg === '' || seg === '/') {
+    const inner = ['cases', 'growth', 'jobs', 'data', 'methodology'];
+    if (inner.some((s) => pathname.includes(`/${s}`))) return undefined;
+    return pathname.includes('/rebuild') ? 'page' : undefined;
+  }
+  return pathname.includes(seg) ? 'page' : undefined;
+}
+
+const path = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -35,10 +47,12 @@ const base = import.meta.env.BASE_URL;
           <span>{t.siteTagline}</span>
         </a>
         <nav class="site-nav" aria-label="Main">
-          <a href={localizedPath('/', lang)} aria-current={Astro.url.pathname.endsWith('/') && !Astro.url.pathname.includes('/cases') ? 'page' : undefined}>{t.nav.home}</a>
-          <a href={localizedPath('/cases/', lang)} aria-current={Astro.url.pathname.includes('/cases') ? 'page' : undefined}>{t.nav.cases}</a>
-          <a href={localizedPath('/data/', lang)} aria-current={Astro.url.pathname.includes('/data') ? 'page' : undefined}>{t.nav.data}</a>
-          <a href={localizedPath('/methodology/', lang)} aria-current={Astro.url.pathname.includes('/methodology') ? 'page' : undefined}>{t.nav.methodology}</a>
+          <a href={localizedPath('/', lang)} aria-current={navCurrent('/', path)}>{t.nav.home}</a>
+          <a href={localizedPath('/cases/', lang)} aria-current={navCurrent('/cases', path)}>{t.nav.cases}</a>
+          <a href={localizedPath('/growth/', lang)} aria-current={navCurrent('/growth', path)}>{t.nav.growth}</a>
+          <a href={localizedPath('/jobs/', lang)} aria-current={navCurrent('/jobs', path)}>{t.nav.jobs}</a>
+          <a href={localizedPath('/data/', lang)} aria-current={navCurrent('/data', path)}>{t.nav.data}</a>
+          <a href={localizedPath('/methodology/', lang)} aria-current={navCurrent('/methodology', path)}>{t.nav.methodology}</a>
         </nav>
         <a class="lang-switch" href={switchLangPath(Astro.url, otherLang)} hreflang={otherLang}>
           {t.langSwitch}

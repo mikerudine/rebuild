@@ -19,9 +19,24 @@ const source = chartData.source;
     <p class="lead">{t.home.lead}</p>
     <div class="cta-row">
       <a class="button button--primary" href={localizedPath('/cases/', lang)}>{t.home.ctaCases}</a>
+      <a class="button button--secondary" href={localizedPath('/growth/', lang)}>{t.home.ctaGrowth}</a>
+      <a class="button button--secondary" href={localizedPath('/jobs/', lang)}>{t.home.ctaJobs}</a>
       <a class="button button--secondary" href={localizedPath('/data/', lang)}>{t.home.ctaData}</a>
     </div>
   </section>
+
+  <div class="card-grid">
+    <article class="card">
+      <h2>{t.home.teaserGrowthTitle}</h2>
+      <p>{t.home.teaserGrowthText}</p>
+      <a class="button button--secondary" href={localizedPath('/growth/', lang)}>{t.home.ctaGrowth}</a>
+    </article>
+    <article class="card">
+      <h2>{t.home.teaserJobsTitle}</h2>
+      <p>{t.home.teaserJobsText}</p>
+      <a class="button button--secondary" href={localizedPath('/jobs/', lang)}>{t.home.ctaJobs}</a>
+    </article>
+  </div>
 
   <ChartFigure
     lang={lang}

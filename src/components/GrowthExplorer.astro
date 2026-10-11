@@ -1,0 +1,288 @@
+---
+import type { Lang } from '@/i18n/ui';
+import growthSummary from '@/data/growth-summary.json';
+
+interface Props {
+  lang: Lang;
+  rankedUrl: string;
+  smallUrl: string;
+}
+
+const { lang, rankedUrl, smallUrl } = Astro.props;
+const s = growthSummary;
+const y = s.yasinia;
+---
+
+<div class="growth-explorer" data-lang={lang} data-ranked={rankedUrl} data-small={smallUrl}>
+  <section class="prose">
+    <p class="lead">
+      {lang === 'uk'
+        ? 'Рейтинг територіальних громад за темпами зростання зареєстрованих юридичних осіб і ФОП у статистичному бізнес-реєстрі (2021→2025). Після 2022 року частина бізнесу релокувалась на заході — це видно як прискорення в раніше «тихих» громадах, зокрема передмістях і карпатських курортах.'
+        : 'Ranking of hromadas by growth in registered legal entities and sole proprietors in the Statistical Business Register (2021→2025). Post-2022 relocation shows up as acceleration in previously quieter hromadas, including suburban rings and Carpathian resorts.'}
+    </p>
+  </section>
+
+  <div class="chart-block">
+    <h3>{lang === 'uk' ? 'Медіанний CAGR юридичних осіб за зонами' : 'Median legal-entity CAGR by zone'}</h3>
+    <div id="growth-zone-chart" class="plot-target"></div>
+    <p class="chart-meta">
+      {lang === 'uk'
+        ? `Захід / центр / фронт: ${s.median_leg_cagr_by_zone_pct['west/relocation-receiving']}% / ${s.median_leg_cagr_by_zone_pct['centre/other']}% / ${s.median_leg_cagr_by_zone_pct['frontline/occupied-affected']}% (медіана по ${s.filters.filtered_hromada_count} громадах з фільтром 30–1000 юросіб у 2021). Медіана всіх: ${s.median_leg_cagr_all_pct}%.`
+        : `West / centre / frontline medians: ${s.median_leg_cagr_by_zone_pct['west/relocation-receiving']}% / ${s.median_leg_cagr_by_zone_pct['centre/other']}% / ${s.median_leg_cagr_by_zone_pct['frontline/occupied-affected']}% (${s.filters.filtered_hromada_count} hromadas, 30–1000 legal entities in 2021). Overall median: ${s.median_leg_cagr_all_pct}%.`}
+    </p>
+  </div>
+
+  <aside class="sources" style="margin: 1.5rem 0;">
+    <h2>{lang === 'uk' ? 'Ясіняська громада (Кваси)' : 'Yasinia hromada (Kvasy)'}</h2>
+    <p>
+      {lang === 'uk'
+        ? `#${y.rank_leg_cagr} з ${s.filters.filtered_hromada_count} за CAGR юросіб (${y.leg_2021}→${y.leg_2025}, +${y.leg_pct}%, CAGR ${y.leg_cagr}%). Серед «малих» (≤200 юросіб у 2021): #${y.rank_leg_cagr_small_rural}. ФОП: +${y.fop_pct}% (CAGR ${y.fop_cagr}%). Композитний сигнал: ${y.strong_signals} сильних показників (rank #${y.rank_composite}).`
+        : `#${y.rank_leg_cagr} of ${s.filters.filtered_hromada_count} by legal-entity CAGR (${y.leg_2021}→${y.leg_2025}, +${y.leg_pct}%, CAGR ${y.leg_cagr}%). Among small hromadas (≤200 legal entities in 2021): #${y.rank_leg_cagr_small_rural}. FOP: +${y.fop_pct}% (CAGR ${y.fop_cagr}%). Composite rank #${y.rank_composite}, ${y.strong_signals} strong signals.`}
+    </p>
+  </aside>
+
+  <div class="chart-block">
+    <h3>{lang === 'uk' ? 'Топ-20 громад за CAGR юридичних осіб' : 'Top 20 hromadas by legal-entity CAGR'}</h3>
+    <div id="growth-top20-chart" class="plot-target" style="min-height: 420px;"></div>
+  </div>
+
+  <div class="table-controls">
+    <label>
+      <input type="checkbox" id="growth-small-only" />
+      {lang === 'uk' ? 'Лише малі/сільські (≤200 юросіб у 2021)' : 'Small/rural subset only (≤200 legal entities in 2021)'}
+    </label>
+    <label>
+      {lang === 'uk' ? 'Зона:' : 'Zone:'}
+      <select id="growth-zone-filter">
+        <option value="">{lang === 'uk' ? 'Усі' : 'All'}</option>
+        <option value="west/relocation-receiving">{lang === 'uk' ? 'Захід / релокація' : 'West / relocation'}</option>
+        <option value="centre/other">{lang === 'uk' ? 'Центр / інші' : 'Centre / other'}</option>
+        <option value="frontline/occupied-affected">{lang === 'uk' ? 'Фронт / окупація' : 'Frontline / occupied-affected'}</option>
+      </select>
+    </label>
+    <label>
+      {lang === 'uk' ? 'Пошук:' : 'Search:'}
+      <input type="search" id="growth-search" placeholder={lang === 'uk' ? 'Назва, центр, область…' : 'Name, centre, oblast…'} />
+    </label>
+  </div>
+
+  <div style="overflow-x: auto; max-height: 28rem; overflow-y: auto;">
+    <table class="data-table" id="growth-table">
+      <thead>
+        <tr>
+          <th data-sort="rank_leg_cagr">#</th>
+          <th data-sort="name">{lang === 'uk' ? 'Громада' : 'Hromada'}</th>
+          <th data-sort="center">{lang === 'uk' ? 'Центр' : 'Centre'}</th>
+          <th data-sort="oblast">{lang === 'uk' ? 'Область' : 'Oblast'}</th>
+          <th data-sort="leg_cagr">CAGR юр.</th>
+          <th data-sort="leg_pct">% юр.</th>
+          <th data-sort="fop_cagr">CAGR ФОП</th>
+          <th data-sort="fop_pct">% ФОП</th>
+          <th data-sort="composite">{lang === 'uk' ? 'Композит' : 'Composite'}</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <section class="prose" style="margin-top: 2rem;">
+    <h2>{lang === 'uk' ? 'Композитний сигнал (з застереженнями)' : 'Composite signal (with caveats)'}</h2>
+    <p>
+      {lang === 'uk'
+        ? 'Композит = 0,35·ранг(CAGR юросіб) + 0,25·CAGR ФОП + 0,15·зростання капінвестицій району + 0,15·житлове будівництво району + 0,10·витрати на довкілля; пропуски = 0,5. «strong_signals» — скільки показників у верхньому квартилі.'
+        : 'Composite = 0.35·pct-rank(legal CAGR) + 0.25·FOP CAGR + 0.15·rayon capital investment growth + 0.15·rayon housing + 0.10·environmental capex; missing values = 0.5. strong_signals counts top-quartile indicators.'}
+    </p>
+    <ul>
+      {s.composite_top.map((row) => (
+        <li>
+          {row.name} ({row.oblast}) — {row.strong_signals} {lang === 'uk' ? 'сильних сигналів' : 'strong signals'}
+        </li>
+      ))}
+    </ul>
+    <h2>{lang === 'uk' ? 'Обмеження' : 'Caveats'}</h2>
+    <ul>
+      {lang === 'uk' ? (
+        <>
+          <li>Реєстр рахує зареєстровані суб’єкти, не активність; релокація після 2022 завищує «приймаючі» громади — це цільовий сигнал дослідження.</li>
+          <li>Суб’єкти з кодом області/міста не розподіляються по громадах.</li>
+          <li>База з 2021 року; населення громад у SDMX немає — на душу населення не рахуємо.</li>
+          <li>Фільтр &gt;1000 юросіб у 2021 відсікає великі міста; тип громади в КАТОТТГ не використовується.</li>
+        </>
+      ) : (
+        <>
+          <li>The register counts registered units, not activity; post-2022 relocation inflates receiving hromadas — the intended signal.</li>
+          <li>Entities registered at oblast/city level are not allocated to hromadas.</li>
+          <li>Series starts 2021; no hromada population in SDMX — no per-capita view.</li>
+          <li>Filter excludes hromadas with &gt;1000 legal entities in 2021; no hromada type in KATOTTG.</li>
+        </>
+      )}
+    </ul>
+  </section>
+
+  <p class="chart-meta">
+    {lang === 'uk' ? 'Джерело:' : 'Source:'}{' '}
+    <a href="https://stat.gov.ua/sdmx/workspaces/default:integration/registry/sdmx/2.1/dataflow/SSSU/DF_STATISTICAL_BUSINESS_REGISTER_A" rel="noopener noreferrer">
+      Derzhstat SDMX · DF_STATISTICAL_BUSINESS_REGISTER_A
+    </a>
+    ·{' '}
+    <a href={s.source.kaggle} rel="noopener noreferrer">Kaggle dataset</a>
+  </p>
+</div>
+
+<script define:vars={{ growthSummary, yasiniaCode: s.yasinia_code }}>
+  import { parseCsv } from '@/lib/csv';
+  import { renderBarChart, renderGroupedBars } from '@/lib/plot-charts';
+
+  const YASINIA = yasiniaCode;
+  const zoneLabels = {
+    uk: {
+      west: 'Захід',
+      centre: 'Центр',
+      front: 'Фронт',
+    },
+    en: {
+      west: 'West',
+      centre: 'Centre',
+      front: 'Frontline',
+    },
+  };
+
+  let allRows = [];
+  let smallRows = [];
+  let sortKey = 'rank_leg_cagr';
+  let sortAsc = true;
+
+  function num(row, key) {
+    const v = parseFloat(row[key]);
+    return Number.isFinite(v) ? v : null;
+  }
+
+  function getActiveRows(smallOnly) {
+    return smallOnly ? smallRows : allRows;
+  }
+
+  function filterRows(rows, zone, q) {
+    let out = rows;
+    if (zone) out = out.filter((r) => r.zone === zone);
+    if (q) {
+      const qq = q.toLowerCase();
+      out = out.filter(
+        (r) =>
+          r.name.toLowerCase().includes(qq) ||
+          r.center.toLowerCase().includes(qq) ||
+          r.oblast.toLowerCase().includes(qq),
+      );
+    }
+    return out;
+  }
+
+  function renderTop20(rows, lang) {
+    const top = [...rows].sort((a, b) => num(a, 'leg_cagr') - num(b, 'leg_cagr')).slice(-20).reverse();
+    const data = top.map((r) => ({
+      label: `${r.name} (${r.center})`,
+      value: num(r, 'leg_cagr'),
+      highlight: r.code === YASINIA,
+    }));
+    renderBarChart(document.getElementById('growth-top20-chart'), data, {
+      xLabel: lang === 'uk' ? 'CAGR юридичних осіб, %' : 'Legal-entity CAGR, %',
+      valueFormat: (n) => `${n.toFixed(1)}%`,
+    });
+  }
+
+  function renderZoneMedians(lang) {
+    const z = growthSummary.median_leg_cagr_by_zone_pct;
+    const labels = lang === 'uk' ? zoneLabels.uk : zoneLabels.en;
+    renderGroupedBars(
+      document.getElementById('growth-zone-chart'),
+      [
+        { group: labels.west, metric: 'CAGR', value: z['west/relocation-receiving'] },
+        { group: labels.centre, metric: 'CAGR', value: z['centre/other'] },
+        { group: labels.front, metric: 'CAGR', value: z['frontline/occupied-affected'] },
+      ],
+      { yLabel: lang === 'uk' ? 'CAGR, %' : 'CAGR, %' },
+    );
+  }
+
+  function renderTable(rows, lang) {
+    const sorted = [...rows].sort((a, b) => {
+      const av = sortKey === 'name' || sortKey === 'center' || sortKey === 'oblast' ? a[sortKey] : num(a, sortKey);
+      const bv = sortKey === 'name' || sortKey === 'center' || sortKey === 'oblast' ? b[sortKey] : num(b, sortKey);
+      if (av === bv) return 0;
+      if (sortAsc) return av > bv ? 1 : -1;
+      return av < bv ? 1 : -1;
+    });
+    const tbody = document.querySelector('#growth-table tbody');
+    tbody.replaceChildren();
+    for (const r of sorted.slice(0, 500)) {
+      const tr = document.createElement('tr');
+      if (r.code === YASINIA) tr.className = 'row-highlight';
+      tr.innerHTML = `<td>${r.rank_leg_cagr}</td><td>${r.name}</td><td>${r.center}</td><td>${r.oblast}</td><td>${r.leg_cagr}</td><td>${r.leg_pct}</td><td>${r.fop_cagr}</td><td>${r.fop_pct}</td><td>${r.composite}</td>`;
+      tbody.appendChild(tr);
+    }
+    if (sorted.length > 500) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td colspan="9">${lang === 'uk' ? `Показано 500 з ${sorted.length} рядків — звузьте фільтр.` : `Showing 500 of ${sorted.length} rows — narrow filters.`}</td>`;
+      tbody.appendChild(tr);
+    }
+  }
+
+  function refresh() {
+    const root = document.querySelector('.growth-explorer');
+    const lang = root?.dataset.lang || 'uk';
+    const smallOnly = document.getElementById('growth-small-only')?.checked;
+    const zone = document.getElementById('growth-zone-filter')?.value;
+    const q = document.getElementById('growth-search')?.value?.trim();
+    const rows = filterRows(getActiveRows(smallOnly), zone, q);
+    renderTop20(rows, lang);
+    renderTable(rows, lang);
+  }
+
+  async function init() {
+    const root = document.querySelector('.growth-explorer');
+    const lang = root?.dataset.lang || 'uk';
+    const [rankedText, smallText] = await Promise.all([
+      fetch(root.dataset.ranked).then((r) => r.text()),
+      fetch(root.dataset.small).then((r) => r.text()),
+    ]);
+    allRows = parseCsv(rankedText);
+    smallRows = parseCsv(smallText);
+    renderZoneMedians(lang);
+    document.getElementById('growth-small-only')?.addEventListener('change', refresh);
+    document.getElementById('growth-zone-filter')?.addEventListener('change', refresh);
+    document.getElementById('growth-search')?.addEventListener('input', refresh);
+    document.querySelectorAll('#growth-table th[data-sort]').forEach((th) => {
+      th.style.cursor = 'pointer';
+      th.addEventListener('click', () => {
+        const key = th.dataset.sort;
+        if (sortKey === key) sortAsc = !sortAsc;
+        else {
+          sortKey = key;
+          sortAsc = key === 'name' || key === 'center' || key === 'oblast';
+        }
+        refresh();
+      });
+    });
+    refresh();
+  }
+
+  init();
+</script>
+
+<style>
+  .table-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    align-items: center;
+  }
+  .table-controls input[type='search'] {
+    min-width: 12rem;
+    padding: 0.35rem 0.5rem;
+  }
+  tr.row-highlight td {
+    background: #fff8dc;
+    font-weight: 600;
+  }
+</style>
