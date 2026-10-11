@@ -1,0 +1,54 @@
+{
+  "source": {
+    "provider": "Derzhstat SDMX",
+    "dataflow_id": "DF_STATISTICAL_BUSINESS_REGISTER_A",
+    "indicators": ["REG_LEG_ENT", "REG_INDIV_ENT"],
+    "period": "2021–2025",
+    "analysis_date": "2026-10-11",
+    "kaggle": "https://www.kaggle.com/datasets/mikerudine/rebuild-ukraine-hromada-growth"
+  },
+  "filters": {
+    "leg_2021_min": 30,
+    "leg_2021_max": 1000,
+    "filtered_hromada_count": 1367,
+    "small_rural_leg_2021_max": 200,
+    "small_rural_count": 739
+  },
+  "median_leg_cagr_by_zone_pct": {
+    "west/relocation-receiving": 1.5,
+    "centre/other": 1.0,
+    "frontline/occupied-affected": 0.0
+  },
+  "median_fop_cagr_by_zone_pct": {
+    "west/relocation-receiving": 10.2,
+    "centre/other": 10.2,
+    "frontline/occupied-affected": 6.5
+  },
+  "median_leg_cagr_all_pct": 0.85,
+  "yasinia_code": "UA21060070000049340",
+  "yasinia": {
+    "name": "Ясінянська",
+    "center": "Ясіня",
+    "rank_leg_cagr": 103,
+    "rank_leg_cagr_small_rural": 80,
+    "rank_fop_cagr": 551,
+    "rank_composite": 193,
+    "leg_2021": 196,
+    "leg_2025": 224,
+    "leg_pct": 14.3,
+    "leg_cagr": 3.4,
+    "fop_2021": 299,
+    "fop_2025": 446,
+    "fop_pct": 49.2,
+    "fop_cagr": 10.5,
+    "strong_signals": 2
+  },
+  "composite_top": [
+    { "name": "Ямницька", "oblast": "Івано-Франківська", "strong_signals": 4 },
+    { "name": "Боратинська", "oblast": "Волинська", "strong_signals": 4 },
+    { "name": "Верхівцівська", "oblast": "Дніпропетровська", "strong_signals": 4 },
+    { "name": "Середнянська", "oblast": "Закарпатська", "strong_signals": 4 },
+    { "name": "Якушинецька", "oblast": "Вінницька", "strong_signals": 4 },
+    { "name": "Більшівцівська", "oblast": "Івано-Франківська", "strong_signals": 4 }
+  ]
+}

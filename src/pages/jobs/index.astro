@@ -1,0 +1,14 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import JobsExplorer from '@/components/JobsExplorer.astro';
+import { getUi } from '@/i18n/ui';
+
+const lang = 'uk';
+const t = getUi(lang);
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout lang={lang} title={t.nav.jobs} description={t.jobs.lead}>
+  <h1>{t.jobs.title}</h1>
+  <JobsExplorer lang={lang} dataUrl={`${base}data/workua_city_monthly.csv`} />
+</BaseLayout>

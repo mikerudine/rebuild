@@ -1,0 +1,30 @@
+/** Labels for work.ua city_slug keys in workua_city_monthly.csv */
+export const workuaCityLabels: Record<string, { uk: string; en: string }> = {
+  ukraine: { uk: 'Україна', en: 'Ukraine' },
+  kyiv: { uk: 'Київ', en: 'Kyiv' },
+  kharkiv: { uk: 'Харків', en: 'Kharkiv' },
+  dnipro: { uk: 'Дніпро', en: 'Dnipro' },
+  odesa: { uk: 'Одеса', en: 'Odesa' },
+  lviv: { uk: 'Львів', en: 'Lviv' },
+  zaporizhzhya: { uk: 'Запоріжжя', en: 'Zaporizhzhia' },
+  vinnytsya: { uk: 'Вінниця', en: 'Vinnytsia' },
+  poltava: { uk: 'Полтава', en: 'Poltava' },
+  cherkasy: { uk: 'Черкаси', en: 'Cherkasy' },
+  zhytomyr: { uk: 'Житомир', en: 'Zhytomyr' },
+  sumy: { uk: 'Суми', en: 'Sumy' },
+  rivne: { uk: 'Рівне', en: 'Rivne' },
+  ternopil: { uk: 'Тернопіль', en: 'Ternopil' },
+  'ivano-frankivsk': { uk: 'Івано-Франківськ', en: 'Ivano-Frankivsk' },
+  lutsk: { uk: 'Луцьк', en: 'Lutsk' },
+  uzhhorod: { uk: 'Ужгород', en: 'Uzhhorod' },
+  khmelnytskyi: { uk: 'Хмельницький', en: 'Khmelnytskyi' },
+  chernihiv: { uk: 'Чернігів', en: 'Chernihiv' },
+  chernivtsi_cv: { uk: 'Чернівці', en: 'Chernivtsi' },
+  kropyvnytskyi: { uk: 'Кропивницький', en: 'Kropyvnytskyi' },
+  kryvyi_rih: { uk: 'Кривий Ріг', en: 'Kryvyi Rih' },
+  mykolaiv_nk: { uk: 'Миколаїв', en: 'Mykolaiv' },
+  kherson: { uk: 'Херсон', en: 'Kherson' },
+  remote: { uk: 'Віддалено', en: 'Remote' },
+};
+
+export const WORKUA_STAT_URL = 'https://www.work.ua/stat/';

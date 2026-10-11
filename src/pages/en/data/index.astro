@@ -17,6 +17,14 @@ const source = chartData.source;
   <p class="lead">{t.data.lead}</p>
 
   <p>
+    {t.data.kaggleLead}{' '}
+    <a href="https://www.kaggle.com/datasets/mikerudine/rebuild-ukraine-hromada-growth" rel="noopener noreferrer">
+      rebuild-ukraine-hromada-growth
+    </a>{' '}
+    (<a href={`${import.meta.env.BASE_URL}data/hromada_growth_ranked.csv`}>hromada_growth_ranked.csv</a>).
+  </p>
+
+  <p>
     SDMX API base:{' '}
     <a href={SDMX_API_BASE} rel="noopener noreferrer">{SDMX_API_BASE}</a>.
     The <code>REGION</code> dimension uses KATOTTG (31,753 codes). No dataflow exposes individual villages; the business register reaches <strong>hromada</strong> level (1,633 codes).

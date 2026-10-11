@@ -1,0 +1,18 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import GrowthExplorer from '@/components/GrowthExplorer.astro';
+import { getUi } from '@/i18n/ui';
+
+const lang = 'en';
+const t = getUi(lang);
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout lang={lang} title={t.nav.growth} description={t.growth.lead}>
+  <h1>{t.growth.title}</h1>
+  <GrowthExplorer
+    lang={lang}
+    rankedUrl={`${base}data/hromada_growth_ranked.csv`}
+    smallUrl={`${base}data/hromada_growth_small_rural.csv`}
+  />
+</BaseLayout>
