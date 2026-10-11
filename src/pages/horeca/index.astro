@@ -1,0 +1,14 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HorecaExplorer from '@/components/HorecaExplorer.astro';
+import { getUi } from '@/i18n/ui';
+
+const lang = 'uk';
+const t = getUi(lang);
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout lang={lang} title={t.nav.horeca} description={t.horeca.lead}>
+  <h1>{t.horeca.title}</h1>
+  <HorecaExplorer lang={lang} base={base} />
+</BaseLayout>

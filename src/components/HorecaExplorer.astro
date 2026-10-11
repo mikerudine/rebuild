@@ -1,0 +1,78 @@
+---
+import type { Lang } from '@/i18n/ui';
+
+interface Props {
+  lang: Lang;
+  base: string;
+}
+
+const { lang, base } = Astro.props;
+---
+
+<div class="horeca-explorer" data-lang={lang} data-base={base}>
+  <p class="lead">
+    {lang === 'uk'
+      ? 'Заклади харчування та розміщення (KVED секція I) у бізнес-реєстрі Держстату по областях (2021→2025) та точки amenity=restaurant/cafe/… в OpenStreetMap (ohsome, 1 січня).'
+      : 'Food service and accommodation (KVED section I) in Derzhstat business register by oblast (2021→2025) and OSM amenity food points (ohsome, Jan 1 snapshots).'}
+  </p>
+
+  <div class="chart-block">
+    <h3>{lang === 'uk' ? 'OSM: зростання точок по областях (2021→2025)' : 'OSM: point growth by oblast (2021→2025)'}</h3>
+    <div id="horeca-osm-oblast-chart" class="plot-target" style="min-height: 360px;"></div>
+  </div>
+
+  <div class="chart-block">
+    <h3>{lang === 'uk' ? 'Derzhstat: ФОП KVED I по областях (2021→2025)' : 'Derzhstat: KVED I FOP by oblast (2021→2025)'}</h3>
+    <div id="horeca-kved-fop-chart" class="plot-target" style="min-height: 360px;"></div>
+    <p class="chart-meta" id="horeca-national-note"></p>
+  </div>
+
+  <div class="chart-block">
+    <h3>{lang === 'uk' ? 'Кореляція OSM vs ФОП I (області)' : 'OSM vs FOP I correlation (oblasts)'}</h3>
+    <div id="horeca-correlation-chart" class="plot-target"></div>
+    <p class="chart-meta" id="horeca-correlation-note"></p>
+  </div>
+
+  <h2>{lang === 'uk' ? 'Топ громад (OSM, Δ 2021→2025)' : 'Top hromadas (OSM, Δ 2021→2025)'}</h2>
+  <table class="data-table" id="horeca-hromada-table">
+    <thead>
+      <tr>
+        <th>{lang === 'uk' ? 'Громада' : 'Hromada'}</th>
+        <th>2021</th>
+        <th>2025</th>
+        <th>Δ</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <section class="prose">
+    <h2>{lang === 'uk' ? 'Застереження' : 'Caveats'}</h2>
+    <ul>
+      {lang === 'uk' ? (
+        <>
+          <li>OSM «count» — об’єкти на дату, частина приросту — мапінг, не відкриття; секція I включає готелі (55).</li>
+          <li>Реєстр рахує зареєстровані суб’єкти, не активні заклади; KVED на рівні громади недоступний.</li>
+          <li>У малих селах 0–3 точки в OSM — сигнал слабкий (наприклад, Зарічанська 0→0).</li>
+        </>
+      ) : (
+        <>
+          <li>OSM counts are objects at a date; growth partly mapping effort; section I includes hotels (55).</li>
+          <li>Register counts registered units, not active outlets; no KVED at hromada level.</li>
+          <li>Small villages often have 0–3 OSM points — weak signal.</li>
+        </>
+      )}
+    </ul>
+  </section>
+
+  <p class="chart-meta">
+    {lang === 'uk' ? 'Джерела:' : 'Sources:'}{' '}
+    Derzhstat SDMX <code>DF_STATISTICAL_BUSINESS_REGISTER_A</code> (ECON_ACT I),{' '}
+    <a href="https://ohsome.org/" rel="noopener noreferrer">ohsome API</a> / OpenStreetMap.
+  </p>
+</div>
+
+<script>
+  import { initHorecaExplorer } from '@/lib/horeca-explorer-client';
+  initHorecaExplorer();
+</script>

@@ -1,0 +1,83 @@
+---
+import type { Lang } from '@/i18n/ui';
+import retailSummary from '@/data/retail-summary.json';
+
+interface Props {
+  lang: Lang;
+  base: string;
+}
+
+const { lang, base } = Astro.props;
+---
+
+<div class="retail-explorer" data-lang={lang} data-base={base}>
+  <p class="lead">
+    {lang === 'uk'
+      ? 'Зміни магазинів мереж ATB, Silpo, Fora, Novus, Sim23 тощо за зрізами OpenStreetMap (1 січня 2021 → 2026) та скориговані оцінки для ATB за офіційними списками. Зростання OSM частково відображає доповнення мап, а не лише відкриття.'
+      : 'Chain store counts (ATB, Silpo, Fora, Novus, Sim23, etc.) from OpenStreetMap snapshots (1 Jan 2021 → 2026) plus ATB counts corrected using official locator lists. OSM growth partly reflects mapping catch-up, not only openings.'}
+  </p>
+
+  <div class="chart-block">
+    <h3>{lang === 'uk' ? 'OSM: зміна магазинів мереж по областях' : 'OSM: chain store change by oblast'}</h3>
+    <div id="retail-osm-oblast-chart" class="plot-target" style="min-height: 400px;"></div>
+  </div>
+
+  <div class="chart-block">
+    <h3>{lang === 'uk' ? 'ATB: скоригована зміна 2021→2026 (офіційний якір)' : 'ATB: corrected 2021→2026 change (official anchor)'}</h3>
+    <div id="retail-atb-corrected-chart" class="plot-target" style="min-height: 360px;"></div>
+    <p class="chart-meta">
+      {lang === 'uk'
+        ? 'Метод: національна повнота OSM 2021 = 1040/1205; оцінка 2021 по областях масштабується від 2026. Джерело якоря: rau.ua / allretail.ua (див. findings).'
+        : 'Method: national OSM 2021 completeness 1040/1205; oblast 2021 estimated from 2026 completeness. Anchor: rau.ua / allretail.ua.'}
+    </p>
+  </div>
+
+  <div class="chart-block">
+    <h3>{lang === 'uk' ? 'Повнота OSM vs офіційні локатори (2026)' : 'OSM completeness vs official locators (2026)'}</h3>
+    <div id="retail-completeness-chart" class="plot-target"></div>
+  </div>
+
+  <h2>{lang === 'uk' ? 'Приклади громад' : 'Hromada examples'}</h2>
+  <table class="data-table" id="retail-examples-table">
+    <thead>
+      <tr>
+        <th>{lang === 'uk' ? 'Громада' : 'Hromada'}</th>
+        <th>2021</th>
+        <th>2026</th>
+        <th>{lang === 'uk' ? 'Контекст' : 'Context'}</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <p class="chart-meta" id="retail-sokil-verify"></p>
+
+  <section class="prose">
+    <h2>{lang === 'uk' ? 'Застереження' : 'Caveats'}</h2>
+    <ul>
+      {lang === 'uk' ? (
+        <>
+          <li>Зростання OSM = відкриття + наздоганання маперів; для ATB на 2026 повнота ~99%, для Sim23 — ~34%.</li>
+          <li>Крим, Севастополь, Донецьк, Херсон, Луганськ: окуповані території, теги OSM змінювались — не інтерпретуйте як чисті закриття/відкриття.</li>
+          <li>Лише ~500 громад мають хоч один магазин мережі в OSM; слабкий зв’язок із CAGR юросіб (Spearman {retailSummary.spearman_leg_vs_stores}).</li>
+        </>
+      ) : (
+        <>
+          <li>OSM growth = openings + mapper catch-up; ATB ~99% complete in 2026, Sim23 ~34%.</li>
+          <li>Crimea, Sevastopol, Donetsk, Kherson, Luhansk: occupied areas — OSM tags are not clean open/close signals.</li>
+          <li>Only ~500 hromadas have any chain store in OSM; weak link to legal-entity CAGR (Spearman {retailSummary.spearman_leg_vs_stores}).</li>
+        </>
+      )}
+    </ul>
+  </section>
+
+  <p class="chart-meta">
+    {lang === 'uk' ? 'Джерела:' : 'Sources:'}{' '}
+    <a href="https://download.geofabrik.de/europe/ukraine.html" rel="noopener noreferrer">Geofabrik OSM</a>,
+    OpenStreetMap contributors, ATB/Silpo/Fora/Novus/Sim23 locators ({lang === 'uk' ? 'деталі' : 'details'}: findings 2026-10-11).
+  </p>
+</div>
+
+<script>
+  import { initRetailExplorer } from '@/lib/retail-explorer-client';
+  initRetailExplorer();
+</script>

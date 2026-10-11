@@ -36,6 +36,16 @@ const source = chartData.source;
       <p>{t.home.teaserJobsText}</p>
       <a class="button button--secondary" href={localizedPath('/jobs/', lang)}>{t.home.ctaJobs}</a>
     </article>
+    <article class="card">
+      <h2>{t.home.teaserRetailTitle}</h2>
+      <p>{t.home.teaserRetailText}</p>
+      <a class="button button--secondary" href={localizedPath('/retail/', lang)}>{t.home.ctaRetail}</a>
+    </article>
+    <article class="card">
+      <h2>{t.home.teaserHorecaTitle}</h2>
+      <p>{t.home.teaserHorecaText}</p>
+      <a class="button button--secondary" href={localizedPath('/horeca/', lang)}>{t.home.ctaHoreca}</a>
+    </article>
   </div>
 
   <ChartFigure

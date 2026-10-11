@@ -79,3 +79,31 @@ export function renderGroupedBars(
   });
   container.append(plot);
 }
+
+export function renderScatter(
+  container: HTMLElement,
+  data: { x: number; y: number; label: string }[],
+  opts: { xLabel: string; yLabel: string; width?: number },
+) {
+  container.replaceChildren();
+  const plot = Plot.plot({
+    width: opts.width ?? Math.min(640, container.clientWidth || 640),
+    height: 420,
+    marginLeft: 52,
+    marginBottom: 48,
+    x: { label: opts.xLabel, grid: true },
+    y: { label: opts.yLabel, grid: true },
+    marks: [
+      Plot.dot(data, { x: 'x', y: 'y', fill: '#0057b7', r: 4, title: 'label' }),
+      Plot.text(data, {
+        x: 'x',
+        y: 'y',
+        text: 'label',
+        dy: -8,
+        fontSize: 9,
+        fill: '#5c5c5c',
+      }),
+    ],
+  });
+  container.append(plot);
+}

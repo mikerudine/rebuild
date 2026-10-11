@@ -1,0 +1,16 @@
+{
+  "sources": {
+    "osm": "OpenStreetMap yearly Geofabrik extracts (ukraine-YY0101.osm.pbf), shop tags matched to chain brands",
+    "atb_official": "ATB press: ~1205 stores end-2020/2021 anchor; 1319 Jan 2026 (rau.ua, interfax)",
+    "locators": "Official web locators ATB/Silpo/Fora/Novus/Sim23 (2026-10-11 scrape)"
+  },
+  "hromada_examples": [
+    { "name": "Сокільницька", "stores_2021": 1, "stores_2026": 8, "note_uk": "передмістя Львова, rank #7 за CAGR юросіб", "note_en": "Lviv suburb, rank #7 legal-entity CAGR" },
+    { "name": "Боратинська", "stores_2021": 0, "stores_2026": 3, "note_uk": "композитний топ-сигнал", "note_en": "composite top signal" },
+    { "name": "Зимноводівська", "stores_2021": 1, "stores_2026": 3, "note_uk": "Львівський район", "note_en": "Lviv rayon" },
+    { "name": "Поляницька", "stores_2021": 0, "stores_2026": 1, "note_uk": "Bukovel", "note_en": "Bukovel" },
+    { "name": "Шпанівська", "stores_2021": 0, "stores_2026": 1, "note_uk": "Рівненська область", "note_en": "Rivne oblast" },
+    { "name": "Гатненська", "stores_2021": 5, "stores_2026": 6, "note_uk": "Київська область", "note_en": "Kyiv oblast" }
+  ],
+  "spearman_leg_vs_stores": 0.14
+}
