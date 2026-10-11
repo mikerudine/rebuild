@@ -1,0 +1,181 @@
+---
+import type { Lang } from '@/i18n/ui';
+import postalSummary from '@/data/postal-summary.json';
+
+interface Props {
+  lang: Lang;
+  base: string;
+}
+
+const { lang, base } = Astro.props;
+const n = postalSummary.national;
+const api = postalSummary.np_api_snapshot;
+---
+
+<div class="postal-explorer" data-lang={lang} data-base={base}>
+  <p class="lead">
+    {lang === 'uk'
+      ? 'Відкритих даних про обсяги посилок по громадах немає. Проксі — зростання мережі Nova Poshta: кількість точок зараз проти точок, чия Ref (UUIDv1) створена до 2021 року, зіставлена з темпами зростання бізнес-реєстру 2021→2025.'
+      : 'No open hromada-level parcel volumes exist. We use Nova Poshta network growth as a proxy: current point counts vs points whose Ref (UUIDv1) was created before 2021, joined to business-register growth 2021→2025.'}
+  </p>
+
+  <section class="prose">
+    <h2>{lang === 'uk' ? 'Національний контекст' : 'National context'}</h2>
+    <ul>
+      {lang === 'uk' ? (
+        <>
+          <li>
+            Nova Poshta (прес про підсумки 2025): {n.parcels_2025_mln} млн посилок (+{n.parcel_growth_yoy_pct}% р/р); мережа +{n.network_points_added_in_2025} точок до {n.network_points_jan_2026} ({n.branches_jan_2026} відділень, {n.postomats_jan_2026} поштоматів) станом на січень 2026 — без регіонального розбиття.
+          </li>
+          <li>
+            НКЕК, форма 3-П «Поштовий зв'язок»: 9 міс. 2025 — загальний обсяг відправлень +{n.ncec_items_9m_2025_yoy_pct}% р/р (внутрішні +{n.ncec_domestic_yoy_pct}%, міжнародні +{n.ncec_international_yoy_pct}%); дохід галузі 2025 — {n.postal_revenue_2025_bln_uah} млрд грн (+{n.postal_revenue_yoy_pct}%) — лише національні підсумки.
+          </li>
+        </>
+      ) : (
+        <>
+          <li>
+            Nova Poshta (2025 results press): {n.parcels_2025_mln} mln parcels (+{n.parcel_growth_yoy_pct}% y/y); network +{n.network_points_added_in_2025} points to {n.network_points_jan_2026} ({n.branches_jan_2026} branches, {n.postomats_jan_2026} postomats) as of Jan 2026 — no regional breakdown published.
+          </li>
+          <li>
+            NCEC form 3-P postal: 9M 2025 total items +{n.ncec_items_9m_2025_yoy_pct}% y/y (domestic +{n.ncec_domestic_yoy_pct}%, international +{n.ncec_international_yoy_pct}%); 2025 sector revenue {n.postal_revenue_2025_bln_uah} bn UAH (+{n.postal_revenue_yoy_pct}%) — national totals only.
+          </li>
+        </>
+      )}
+    </ul>
+  </section>
+
+  <div class="chart-block">
+    <h3>{lang === 'uk' ? 'Медіана np_branches_ratio за зонами' : 'Median np_branches_ratio by zone'}</h3>
+    <div id="postal-zone-chart" class="plot-target"></div>
+    <p class="chart-meta">
+      {lang === 'uk'
+        ? `Захід ${postalSummary.zone_median_np_branches_ratio.west}, центр ${postalSummary.zone_median_np_branches_ratio.centre}, фронт ${postalSummary.zone_median_np_branches_ratio.frontline} (findings 2026-10-11).`
+        : `West ${postalSummary.zone_median_np_branches_ratio.west}, centre ${postalSummary.zone_median_np_branches_ratio.centre}, frontline ${postalSummary.zone_median_np_branches_ratio.frontline} (findings 2026-10-11).`}
+    </p>
+  </div>
+
+  <div class="chart-block">
+    <h3>{lang === 'uk' ? 'Медіана np_branches_ratio за квінтилями зростання ФОП' : 'Median np_branches_ratio by FOP growth quintile'}</h3>
+    <div id="postal-quintile-chart" class="plot-target"></div>
+  </div>
+
+  <div class="chart-block">
+    <h3>{lang === 'uk' ? 'Зростання ФОП vs мережа NP (відділення)' : 'FOP growth vs NP branch network ratio'}</h3>
+    <div id="postal-scatter-chart" class="plot-target"></div>
+    <p class="chart-meta" id="postal-correlation-note"></p>
+  </div>
+
+  <h2>{lang === 'uk' ? 'Топ громад за зростанням бізнесу: NP до 2021 → зараз' : 'Top business-growth hromadas: NP pre-2021 → now'}</h2>
+  <table class="data-table" id="postal-examples-table">
+    <thead>
+      <tr>
+        <th>{lang === 'uk' ? 'Громада' : 'Hromada'}</th>
+        <th>{lang === 'uk' ? 'Область' : 'Oblast'}</th>
+        <th>{lang === 'uk' ? 'NP до 2021' : 'NP pre-2021'}</th>
+        <th>{lang === 'uk' ? 'NP зараз' : 'NP now'}</th>
+        <th>{lang === 'uk' ? 'Юрособи, %' : 'Legal, %'}</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>{lang === 'uk' ? 'Усі громади з рейтингу зростання' : 'All ranked growth hromadas'}</h2>
+  <div class="table-controls">
+    <label>
+      {lang === 'uk' ? 'Зона:' : 'Zone:'}
+      <select id="postal-zone-filter">
+        <option value="">{lang === 'uk' ? 'Усі' : 'All'}</option>
+        <option value="west/relocation-receiving">{lang === 'uk' ? 'Захід / релокація' : 'West / relocation'}</option>
+        <option value="centre/other">{lang === 'uk' ? 'Центр / інші' : 'Centre / other'}</option>
+        <option value="frontline/occupied-affected">{lang === 'uk' ? 'Фронт / окупація' : 'Frontline / occupied-affected'}</option>
+      </select>
+    </label>
+    <label>
+      {lang === 'uk' ? 'Пошук:' : 'Search:'}
+      <input type="search" id="postal-search" placeholder={lang === 'uk' ? 'назва, область…' : 'name, oblast…'} />
+    </label>
+  </div>
+  <table class="data-table" id="postal-table">
+    <thead>
+      <tr>
+        <th data-sort="rank_leg_cagr">#</th>
+        <th data-sort="name">{lang === 'uk' ? 'Громада' : 'Hromada'}</th>
+        <th data-sort="oblast">{lang === 'uk' ? 'Область' : 'Oblast'}</th>
+        <th data-sort="leg_pct">{lang === 'uk' ? 'Юрособи %' : 'Legal %'}</th>
+        <th data-sort="fop_pct">{lang === 'uk' ? 'ФОП %' : 'FOP %'}</th>
+        <th data-sort="np_points_created_pre2021">{lang === 'uk' ? 'NP до 2021' : 'NP pre-2021'}</th>
+        <th data-sort="np_points_now">{lang === 'uk' ? 'NP зараз' : 'NP now'}</th>
+        <th data-sort="np_points_ratio">{lang === 'uk' ? 'Точки ×' : 'Points ×'}</th>
+        <th data-sort="np_branches_ratio">{lang === 'uk' ? 'Відд. ×' : 'Branches ×'}</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <section class="prose">
+    <h2>{lang === 'uk' ? 'Метод' : 'Method'}</h2>
+    <ul>
+      {lang === 'uk' ? (
+        <>
+          <li>
+            Джерело точок: публічний API Nova Poshta <code>getWarehouses</code> (порожній apiKey), зріз {api.working_points} робочих точок з координатами (findings 2026-10-11).
+          </li>
+          <li>
+            <code>ref_created</code> — час з UUIDv1 поля Ref. Валідація: {api.ref_created_before_2026} точок з ref &lt; 2026-01-01 vs {api.np_reported_jan_2026} у звіті NP ({api.validation_pct_vs_np_2026}%); &lt; 2025-01-01: {api.ref_created_before_2025} vs ~{api.np_implied_2025} ({api.validation_pct_vs_np_2025}%).
+          </li>
+          <li>
+            Прив'язка до громади через bounds.pkl: ~{api.hromada_mapped_pct}% точок; невідображені — переважно м. Київ (немає в межах громад).
+          </li>
+          <li>
+            Співставлення з <code>hromada_growth_ranked.csv</code>: {postalSummary.spearman_hromada_join_n} громад; повний перелік NP по громадах — <code>np_hromada_counts.csv</code>.
+          </li>
+        </>
+      ) : (
+        <>
+          <li>
+            Point source: Nova Poshta public API <code>getWarehouses</code> (empty apiKey), snapshot of {api.working_points} working locations (findings 2026-10-11).
+          </li>
+          <li>
+            <code>ref_created</code> from UUIDv1 Ref timestamp. Validation: {api.ref_created_before_2026} refs before 2026-01-01 vs {api.np_reported_jan_2026} NP-reported ({api.validation_pct_vs_np_2026}%); before 2025-01-01: {api.ref_created_before_2025} vs ~{api.np_implied_2025} ({api.validation_pct_vs_np_2025}%).
+          </li>
+          <li>
+            Hromada assignment via bounds.pkl: ~{api.hromada_mapped_pct}% of points; unmapped mostly Kyiv city (not a hromada in bounds).
+          </li>
+          <li>
+            Joined to growth ranking: {postalSummary.spearman_hromada_join_n} hromadas; full NP counts — <code>np_hromada_counts.csv</code>.
+          </li>
+        </>
+      )}
+    </ul>
+
+    <h2>{lang === 'uk' ? 'Застереження' : 'Caveats'}</h2>
+    <ul>
+      {lang === 'uk' ? (
+        <>
+          <li>Закриті точки зникають з API — «survivorship bias»; база «до 2021» занижена там, де мережа скоротилась (зокрема фронт).</li>
+          <li>Ref до 2021 для відділень часто кластеризується в 2014–2016 (міграція в системі NP) — дата Ref ≈ «перша поява в сьогоднішній системі», не дата відкриття.</li>
+          <li>Областні «surviving growth» метрики оманливі (Донецьк/Запоріжжя зверху через втрачені старі точки) — інтерпретуйте на рівні громади або лише західні області.</li>
+          <li>Це не обсяги посилок; Ukrposhta/Meest не включені; OSM поштові об'єкти неповні для NP.</li>
+        </>
+      ) : (
+        <>
+          <li>Closed points drop out of the API — survivorship bias; pre-2021 bases are understated where the network shrank (especially frontline).</li>
+          <li>Pre-2021 branch Refs often cluster in 2014–2016 (NP system migration) — Ref date ≈ first appearance in today&apos;s system, not opening date.</li>
+          <li>Oblast-level &quot;surviving growth&quot; ratios mislead (Donetsk/Zaporizhzhia rank high because old points were lost) — use hromada level or western oblasts only.</li>
+          <li>Not parcel volumes; excludes Ukrposhta/Meest; OSM postal features are incomplete for NP.</li>
+        </>
+      )}
+    </ul>
+  </section>
+
+  <p class="chart-meta">
+    {lang === 'uk' ? 'Джерела:' : 'Sources:'}{' '}
+    Nova Poshta public API <code>getWarehouses</code>, Nova Poshta 2025 press results, NCEC form 3-P «Поштовий зв'язок», Derzhstat business register (growth join), findings 2026-10-11 (
+    <code>hromada_growth_vs_np.csv</code>, <code>np_hromada_counts.csv</code>).
+  </p>
+</div>
+
+<script>
+  import { initPostalExplorer } from '@/lib/postal-explorer-client';
+  initPostalExplorer();
+</script>

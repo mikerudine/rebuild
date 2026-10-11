@@ -13,6 +13,7 @@ export const ui = {
       jobs: 'Вакансії та зарплати',
       retail: 'Магазини мереж',
       horeca: 'Заклади харчування',
+      postal: 'Пошта і посилки',
       data: 'Дані',
       methodology: 'Методологія',
     },
@@ -33,10 +34,14 @@ export const ui = {
       teaserJobsText: 'Місячні медіани work.ua по містах: зарплати в оголошеннях і кількість вакансій.',
       ctaRetail: 'Магазини мереж',
       ctaHoreca: 'Заклади харчування',
+      ctaPostal: 'Пошта і посилки',
       teaserRetailTitle: 'Магазини мереж',
       teaserRetailText: 'OSM + офіційні списки ATB: де зростають магазини мереж 2021→2026.',
       teaserHorecaTitle: 'Заклади харчування',
       teaserHorecaText: 'KVED I у Держстаті та точки їжі в OSM по областях і громадах.',
+      teaserPostalTitle: 'Пошта і посилки',
+      teaserPostalText:
+        'Мережа Nova Poshta по громадах (до 2021 vs зараз з UUID Ref) і зв’язок із зростанням бізнес-реєстру; національний контекст 522 млн посилок (2025).',
       featuredChartTitle: 'Ясіняська громада: зареєстровані юридичні особи',
       featuredChartNote:
         'Кваси входить до Ясіняської ТГ. Показник з річного статистичного бізнес-реєстру (рівень громади).',
@@ -65,6 +70,10 @@ export const ui = {
     horeca: {
       title: 'Заклади харчування',
       lead: 'KVED I (їжа та розміщення) у бізнес-реєстрі та точки харчування в OSM.',
+    },
+    postal: {
+      title: 'Пошта і посилки',
+      lead: 'Проксі логістики: зростання мережі Nova Poshta по громадах (Ref UUID до 2021 vs зараз) та кореляція зі зростанням юросіб і ФОП; NCEC і NP — національний контекст.',
     },
     data: {
       title: 'Дані',
@@ -95,6 +104,7 @@ export const ui = {
       jobs: 'Jobs & salaries',
       retail: 'Chain stores',
       horeca: 'Food service',
+      postal: 'Mail & parcels',
       data: 'Data',
       methodology: 'Methodology',
     },
@@ -115,10 +125,14 @@ export const ui = {
       teaserJobsText: 'Monthly work.ua medians by city: advertised salaries and vacancy counts.',
       ctaRetail: 'Chain stores',
       ctaHoreca: 'Food service',
+      ctaPostal: 'Mail & parcels',
       teaserRetailTitle: 'Chain stores',
       teaserRetailText: 'OSM plus official ATB lists: where chain stores grew 2021→2026.',
       teaserHorecaTitle: 'Food service',
       teaserHorecaText: 'Derzhstat KVED I and OSM food points by oblast and hromada.',
+      teaserPostalTitle: 'Mail & parcels',
+      teaserPostalText:
+        'Nova Poshta hromada network (pre-2021 vs now from UUID Ref) vs business-register growth; national context (522M parcels in 2025).',
       featuredChartTitle: 'Yasinia hromada: registered legal entities',
       featuredChartNote:
         'Kvasy is part of Yasinia hromada. Annual Statistical Business Register indicator at hromada level.',
@@ -147,6 +161,10 @@ export const ui = {
     horeca: {
       title: 'Food service',
       lead: 'KVED section I in the business register and OSM food amenity points.',
+    },
+    postal: {
+      title: 'Mail & parcels',
+      lead: 'Logistics proxy: Nova Poshta hromada network growth (Ref UUID before 2021 vs now) correlated with legal-entity and FOP growth; NCEC and NP national totals.',
     },
     data: {
       title: 'Data',
