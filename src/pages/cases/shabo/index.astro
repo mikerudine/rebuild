@@ -1,0 +1,52 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { localizedPath } from '@/i18n/utils';
+
+const lang = 'uk';
+---
+
+<BaseLayout lang={lang} title="Шабо">
+  <article class="prose">
+    <h1>Шабо</h1>
+    <p class="lead">
+      Село в Білгород-Дністровському районі Одеської області. Код КАТОТТГ населеного пункту в дослідженні SDMX:
+      <code>UA51040310010035609</code>.
+    </p>
+
+    <section>
+      <h2>Економіка та туризм</h2>
+      <ul>
+        <li>Компанія SHABO та <strong>Центр культури вина</strong> (відкриття — 2009 р., за матеріалами SHABO та Вікіпедії).</li>
+        <li>У публікації «Економічна правда» компанію описано як <em>містоутворюючу</em>, що підтримує утримання села.</li>
+        <li>
+          <strong>60–70 тис. відвідувачів на рік</strong> — за словами компанії в інтерв’ю «Економічна правда» (грудень 2023); це не дані Держстату, а цитата зі ЗМІ.
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Дані на цьому сайті</h2>
+      <p>
+        Обласні ряди SDMX про виноград/вино (наприклад, <code>DF_ARRIVAL_GRAPES_WINE_MATERIALS</code>) не дають розбивки по селу Шабо.
+        Для порівняння громад варто дивитися бізнес-реєстр на рівні ТГ, коли буде зіставлено код громади села.
+      </p>
+    </section>
+
+    <section class="sources">
+      <h2>Джерела</h2>
+      <ul>
+        <li>
+          <a href="https://epravda.com.ua/publications/2023/12/19/707732/" rel="noopener noreferrer">Економічна правда — публікація про SHABO (в т.ч. відвідуваність)</a>
+        </li>
+        <li>
+          <a href="https://shabo.ua/centr-kulturi-vina/" rel="noopener noreferrer">SHABO — Центр культури вина</a>
+        </li>
+        <li>
+          <a href="https://uk.wikipedia.org/wiki/Центр_культури_вина_Шабо" rel="noopener noreferrer">Вікіпедія — Центр культури вина Шабо</a>
+        </li>
+      </ul>
+    </section>
+
+    <p><a href={localizedPath('/cases/', lang)}>← Усі кейси</a></p>
+  </article>
+</BaseLayout>

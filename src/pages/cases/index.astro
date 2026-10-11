@@ -1,0 +1,28 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getUi } from '@/i18n/ui';
+import { localizedPath } from '@/i18n/utils';
+
+const lang = 'uk';
+const t = getUi(lang);
+---
+
+<BaseLayout lang={lang} title={t.cases.title}>
+  <h1>{t.cases.title}</h1>
+  <p class="lead">{t.cases.lead}</p>
+
+  <div class="card-grid">
+    <article class="card">
+      <h2>{t.cases.kvasyTitle}</h2>
+      <p class="meta">{t.cases.kvasyMeta}</p>
+      <p>Мінеральні джерела, санаторій «Гірська Тиса», туристичні ініціативи молоді — без опублікованих на цьому сайті цифр динаміки населення.</p>
+      <a class="button button--secondary" href={localizedPath('/cases/kvasy/', lang)}>{t.cases.read}</a>
+    </article>
+    <article class="card">
+      <h2>{t.cases.shaboTitle}</h2>
+      <p class="meta">{t.cases.shaboMeta}</p>
+      <p>Виноробство SHABO, Центр культури вина; відвідуваність з публікації «Економічна правда» (див. кейс).</p>
+      <a class="button button--secondary" href={localizedPath('/cases/shabo/', lang)}>{t.cases.read}</a>
+    </article>
+  </div>
+</BaseLayout>

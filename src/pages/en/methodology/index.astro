@@ -1,0 +1,50 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getUi } from '@/i18n/ui';
+import { SDMX_API_BASE } from '@/data/sdmx-catalog';
+
+const lang = 'en';
+const t = getUi(lang);
+---
+
+<BaseLayout lang={lang} title={t.methodology.title}>
+  <article class="prose">
+    <h1>{t.methodology.title}</h1>
+    <p class="lead">{t.methodology.lead}</p>
+
+    <section>
+      <h2>Derzhstat SDMX</h2>
+      <ul>
+        <li>Dataflow catalog: <code>{SDMX_API_BASE}/dataflow/all/all/latest</code> (125 flows as of 2026-10-11 checks).</li>
+        <li>Regional availability: <code>/availableconstraint/&lt;DF&gt;/all/all/REGION</code>.</li>
+        <li>Data: <code>/data/&lt;DF&gt;/&lt;key&gt;?startPeriod=YYYY</code>. Keys must not start with «.» — put indicator codes first.</li>
+        <li><code>c[REGION]=</code> filters are ignored; CSV Accept often returns 404 — we use XML.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Other sources (cases)</h2>
+      <ul>
+        <li>Media, hromada sites, SHABO materials — linked on case pages.</li>
+        <li><strong>api.openbudget.gov.ua</strong> — expected hromada budget API; not verified from build infrastructure. No budget figures until verified.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Limitations</h2>
+      <ul>
+        <li>No village/hromada population in SDMX; <code>DF_POPULATION_STRUCTURE</code> is oblast-level.</li>
+        <li>War-related coverage gaps from 2022 onward in official metadata.</li>
+        <li>2020 amalgamation changed hromada boundaries; KATOTTG vs legacy KOATUU.</li>
+        <li>Every chart ships with JSON including <code>source</code>, <code>fetched_at</code>, and query URL.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Build pipeline</h2>
+      <p>
+        Before <code>astro build</code>, <code>scripts/fetch-sdmx.ts</code> pulls verified series into <code>public/data/</code>. GitHub Actions deploys static output to Pages with <code>base: /rebuild/</code>.
+      </p>
+    </section>
+  </article>
+</BaseLayout>

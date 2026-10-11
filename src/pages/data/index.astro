@@ -1,0 +1,58 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ChartFigure from '@/components/ChartFigure.astro';
+import { getUi } from '@/i18n/ui';
+import { sdmxCatalog, SDMX_API_BASE } from '@/data/sdmx-catalog';
+import chartData from '@/data/generated/yasinia-business-register.json';
+
+const lang = 'uk';
+const t = getUi(lang);
+const base = import.meta.env.BASE_URL;
+const dataUrl = `${base}data/yasinia-business-register.json`;
+const source = chartData.source;
+---
+
+<BaseLayout lang={lang} title={t.data.title}>
+  <h1>{t.data.title}</h1>
+  <p class="lead">{t.data.lead}</p>
+
+  <p>
+    Базовий URL SDMX API:{' '}
+    <a href={SDMX_API_BASE} rel="noopener noreferrer">{SDMX_API_BASE}</a>.
+    Вимір <code>REGION</code> використовує довідник КАТОТТГ (31 753 коди). Жоден dataflow не дає рівня окремого села; найнижчий рівень для бізнес-реєстру — <strong>громада</strong> (1 633 коди).
+  </p>
+
+  <ChartFigure
+    lang={lang}
+    title={t.data.chartTitle}
+    chartId="data-yasinia-chart"
+    dataUrl={dataUrl}
+    sourceLabel={`${source.provider} · ${source.dataflow_id}`}
+    sourceUrl={source.query_url}
+    fetchedAt={chartData.fetched_at}
+  />
+
+  <h2>{t.data.catalogTitle}</h2>
+  <div style="overflow-x: auto;">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Dataflow ID</th>
+          <th>Назва</th>
+          <th>Найнижча географія</th>
+          <th>Період (перевірка)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {sdmxCatalog.map((row) => (
+          <tr>
+            <td><code>{row.id}</code></td>
+            <td>{row.titleUk}</td>
+            <td>{row.lowestGeoUk}</td>
+            <td>{row.yearsNote}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</BaseLayout>

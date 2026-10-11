@@ -1,0 +1,68 @@
+---
+import type { Lang } from '@/i18n/ui';
+import { getUi } from '@/i18n/ui';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  chartId: string;
+  dataUrl: string;
+  sourceLabel: string;
+  sourceUrl: string;
+  fetchedAt: string;
+  note?: string;
+}
+
+const { lang, title, chartId, dataUrl, sourceLabel, sourceUrl, fetchedAt, note } = Astro.props;
+const t = getUi(lang);
+const base = import.meta.env.BASE_URL;
+---
+
+<figure class="chart-block">
+  <h3>{title}</h3>
+  {note && <p class="lead" style="font-size: 0.9rem; margin-bottom: 0.75rem;">{note}</p>}
+  <div id={chartId} class="plot-target" data-chart-url={dataUrl} data-chart-id={chartId}></div>
+  <figcaption class="chart-meta">
+    <p>
+      <strong>{t.chart.source}:</strong>{' '}
+      <a href={sourceUrl} rel="noopener noreferrer">{sourceLabel}</a>
+    </p>
+    <p><strong>{t.chart.fetched}:</strong> {fetchedAt}</p>
+    <p>
+      <strong>{t.chart.data}:</strong>{' '}
+      <a href={`${base}${dataUrl.replace(/^\//, '')}`} download>{dataUrl.split('/').pop()}</a>
+    </p>
+  </figcaption>
+</figure>
+
+<script>
+  import { renderLineChart } from '@/lib/plot-client';
+
+  async function initCharts() {
+    const nodes = document.querySelectorAll<HTMLElement>('[data-chart-url]');
+    for (const el of nodes) {
+      const url = el.dataset.chartUrl;
+      if (!url || el.dataset.loaded) continue;
+      el.dataset.loaded = '1';
+      const res = await fetch(url);
+      const json = await res.json();
+      const series = json.series?.[0];
+      if (!series) continue;
+      const points = series.observations.map((o: { year: number; value: number }) => ({
+        x: o.year,
+        y: o.value,
+      }));
+      renderLineChart(el, {
+        data: points,
+        xLabel: langFromDoc(),
+        yLabel: series.indicator_label_uk || series.indicator,
+      });
+    }
+  }
+
+  function langFromDoc() {
+    return document.documentElement.lang === 'en' ? 'Year' : 'Рік';
+  }
+
+  initCharts();
+</script>

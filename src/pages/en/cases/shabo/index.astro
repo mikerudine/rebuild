@@ -1,0 +1,51 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { localizedPath } from '@/i18n/utils';
+
+const lang = 'en';
+---
+
+<BaseLayout lang={lang} title="Shabo">
+  <article class="prose">
+    <h1>Shabo</h1>
+    <p class="lead">
+      Village in Bilhorod-Dnistrovskyi rayon, Odesa oblast. Settlement KATOTTG from SDMX research:
+      <code>UA51040310010035609</code>.
+    </p>
+
+    <section>
+      <h2>Economy and tourism</h2>
+      <ul>
+        <li>SHABO company and the <strong>Wine Culture Centre</strong> (opened 2009 per SHABO and Wikipedia).</li>
+        <li>Ekonomichna Pravda describes the company as town-forming and supporting village upkeep.</li>
+        <li>
+          <strong>60–70 thousand visitors per year</strong> — attributed to the company in Ekonomichna Pravda (December 2023); media quote, not Derzhstat.
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Data on this site</h2>
+      <p>
+        Oblast-level wine/grape SDMX flows (e.g. <code>DF_ARRIVAL_GRAPES_WINE_MATERIALS</code>) do not break out Shabo village.
+      </p>
+    </section>
+
+    <section class="sources">
+      <h2>Sources</h2>
+      <ul>
+        <li>
+          <a href="https://epravda.com.ua/publications/2023/12/19/707732/" rel="noopener noreferrer">Ekonomichna Pravda — SHABO (incl. visitors)</a>
+        </li>
+        <li>
+          <a href="https://shabo.ua/centr-kulturi-vina/" rel="noopener noreferrer">SHABO — Wine Culture Centre</a>
+        </li>
+        <li>
+          <a href="https://uk.wikipedia.org/wiki/Центр_культури_вина_Шабо" rel="noopener noreferrer">Wikipedia (uk) — Wine Culture Centre Shabo</a>
+        </li>
+      </ul>
+    </section>
+
+    <p><a href={localizedPath('/cases/', lang)}>← All cases</a></p>
+  </article>
+</BaseLayout>

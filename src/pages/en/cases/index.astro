@@ -1,0 +1,28 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getUi } from '@/i18n/ui';
+import { localizedPath } from '@/i18n/utils';
+
+const lang = 'en';
+const t = getUi(lang);
+---
+
+<BaseLayout lang={lang} title={t.cases.title}>
+  <h1>{t.cases.title}</h1>
+  <p class="lead">{t.cases.lead}</p>
+
+  <div class="card-grid">
+    <article class="card">
+      <h2>{t.cases.kvasyTitle}</h2>
+      <p class="meta">{t.cases.kvasyMeta}</p>
+      <p>Mineral springs, Hirska Tysa sanatorium, youth tourism projects — no village population trend published here without a source.</p>
+      <a class="button button--secondary" href={localizedPath('/cases/kvasy/', lang)}>{t.cases.read}</a>
+    </article>
+    <article class="card">
+      <h2>{t.cases.shaboTitle}</h2>
+      <p class="meta">{t.cases.shaboMeta}</p>
+      <p>SHABO winery and Wine Culture Centre; visitor figures from Ekonomichna Pravda (see case page).</p>
+      <a class="button button--secondary" href={localizedPath('/cases/shabo/', lang)}>{t.cases.read}</a>
+    </article>
+  </div>
+</BaseLayout>
