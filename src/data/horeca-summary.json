@@ -1,0 +1,15 @@
+{
+  "sources": {
+    "derzhstat": "DF_STATISTICAL_BUSINESS_REGISTER_A, BREAKDOWN ECON_ACT section I (accommodation+food), oblast level 2021–2025",
+    "osm": "ohsome API, amenity restaurant/cafe/fast_food/bar/pub, Jan-1 snapshots 2019–2026"
+  },
+  "correlation_oblast": {
+    "osm_vs_legal_I": 0.54,
+    "osm_vs_fop_I": 0.48,
+    "legal_vs_fop_I": 0.67
+  },
+  "national_kved_56": {
+    "restaurants_legal_pct_2021_2025": 14.5,
+    "restaurants_fop_pct_2021_2025": 47.9
+  }
+}

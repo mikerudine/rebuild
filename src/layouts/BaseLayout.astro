@@ -20,7 +20,7 @@ const base = import.meta.env.BASE_URL;
 function navCurrent(pathSegment: string, pathname: string): 'page' | undefined {
   const seg = pathSegment.replace(/\/$/, '');
   if (seg === '' || seg === '/') {
-    const inner = ['cases', 'growth', 'jobs', 'data', 'methodology'];
+    const inner = ['cases', 'growth', 'jobs', 'retail', 'horeca', 'data', 'methodology'];
     if (inner.some((s) => pathname.includes(`/${s}`))) return undefined;
     return pathname.includes('/rebuild') ? 'page' : undefined;
   }
@@ -51,6 +51,8 @@ const path = Astro.url.pathname;
           <a href={localizedPath('/cases/', lang)} aria-current={navCurrent('/cases', path)}>{t.nav.cases}</a>
           <a href={localizedPath('/growth/', lang)} aria-current={navCurrent('/growth', path)}>{t.nav.growth}</a>
           <a href={localizedPath('/jobs/', lang)} aria-current={navCurrent('/jobs', path)}>{t.nav.jobs}</a>
+          <a href={localizedPath('/retail/', lang)} aria-current={navCurrent('/retail', path)}>{t.nav.retail}</a>
+          <a href={localizedPath('/horeca/', lang)} aria-current={navCurrent('/horeca', path)}>{t.nav.horeca}</a>
           <a href={localizedPath('/data/', lang)} aria-current={navCurrent('/data', path)}>{t.nav.data}</a>
           <a href={localizedPath('/methodology/', lang)} aria-current={navCurrent('/methodology', path)}>{t.nav.methodology}</a>
         </nav>

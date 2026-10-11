@@ -11,6 +11,8 @@ export const ui = {
       cases: 'Кейси',
       growth: 'Де росте бізнес',
       jobs: 'Вакансії та зарплати',
+      retail: 'Магазини мереж',
+      horeca: 'Заклади харчування',
       data: 'Дані',
       methodology: 'Методологія',
     },
@@ -29,6 +31,12 @@ export const ui = {
         'Рейтинг громад за зростанням юросіб і ФОП 2021→2025: топ-20, малі громади, позиція Ясіняської ТГ.',
       teaserJobsTitle: 'Вакансії та зарплати',
       teaserJobsText: 'Місячні медіани work.ua по містах: зарплати в оголошеннях і кількість вакансій.',
+      ctaRetail: 'Магазини мереж',
+      ctaHoreca: 'Заклади харчування',
+      teaserRetailTitle: 'Магазини мереж',
+      teaserRetailText: 'OSM + офіційні списки ATB: де зростають магазини мереж 2021→2026.',
+      teaserHorecaTitle: 'Заклади харчування',
+      teaserHorecaText: 'KVED I у Держстаті та точки їжі в OSM по областях і громадах.',
       featuredChartTitle: 'Ясіняська громада: зареєстровані юридичні особи',
       featuredChartNote:
         'Кваси входить до Ясіняської ТГ. Показник з річного статистичного бізнес-реєстру (рівень громади).',
@@ -49,6 +57,14 @@ export const ui = {
     jobs: {
       title: 'Вакансії та зарплати',
       lead: 'Місячні медіанні зарплати та вакансії work.ua по містах України.',
+    },
+    retail: {
+      title: 'Магазини мереж',
+      lead: 'Зміни магазинів мереж у OpenStreetMap та скориговані оцінки ATB по областях, 2021→2026.',
+    },
+    horeca: {
+      title: 'Заклади харчування',
+      lead: 'KVED I (їжа та розміщення) у бізнес-реєстрі та точки харчування в OSM.',
     },
     data: {
       title: 'Дані',
@@ -77,6 +93,8 @@ export const ui = {
       cases: 'Cases',
       growth: 'Business growth',
       jobs: 'Jobs & salaries',
+      retail: 'Chain stores',
+      horeca: 'Food service',
       data: 'Data',
       methodology: 'Methodology',
     },
@@ -95,6 +113,12 @@ export const ui = {
         'Hromada ranking by legal entities and FOP growth 2021→2025: top 20, small hromadas, Yasinia highlighted.',
       teaserJobsTitle: 'Jobs & salaries',
       teaserJobsText: 'Monthly work.ua medians by city: advertised salaries and vacancy counts.',
+      ctaRetail: 'Chain stores',
+      ctaHoreca: 'Food service',
+      teaserRetailTitle: 'Chain stores',
+      teaserRetailText: 'OSM plus official ATB lists: where chain stores grew 2021→2026.',
+      teaserHorecaTitle: 'Food service',
+      teaserHorecaText: 'Derzhstat KVED I and OSM food points by oblast and hromada.',
       featuredChartTitle: 'Yasinia hromada: registered legal entities',
       featuredChartNote:
         'Kvasy is part of Yasinia hromada. Annual Statistical Business Register indicator at hromada level.',
@@ -115,6 +139,14 @@ export const ui = {
     jobs: {
       title: 'Jobs & salaries',
       lead: 'Monthly work.ua median salaries and vacancy counts for Ukrainian cities.',
+    },
+    retail: {
+      title: 'Chain stores',
+      lead: 'OpenStreetMap chain store change and ATB-corrected oblast estimates, 2021→2026.',
+    },
+    horeca: {
+      title: 'Food service',
+      lead: 'KVED section I in the business register and OSM food amenity points.',
     },
     data: {
       title: 'Data',
