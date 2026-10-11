@@ -25,6 +25,12 @@ npm run build
 
 Site is served under `/rebuild/` on GitHub Pages (`astro.config.mjs` `base`).
 
+## Deployment
+
+On push to `main`, GitHub Actions runs `npm run build` and publishes `dist/` to the **`gh-pages`** branch.
+
+In the repository **Settings → Pages**, set **Build and deployment → Source** to **Deploy from a branch**, branch **`gh-pages`**, folder **`/ (root)`**. The site URL is https://mikerudine.github.io/rebuild/
+
 ## License
 
 MIT for site code. Statistical figures remain subject to their original sources (Derzhstat, cited media).
