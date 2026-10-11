@@ -1,0 +1,45 @@
+{
+  "sources_note": "findings_aded.md (2026-10-11); joined CSV hromada_growth_vs_np",
+  "national": {
+    "parcels_2025_mln": 522,
+    "parcel_growth_yoy_pct": 10,
+    "network_points_jan_2026": 50003,
+    "branches_jan_2026": 2195,
+    "postomats_jan_2026": 10053,
+    "network_points_added_in_2025": 12248,
+    "ncec_items_9m_2025_yoy_pct": 13,
+    "ncec_domestic_yoy_pct": 8,
+    "ncec_international_yoy_pct": 126,
+    "postal_revenue_2025_bln_uah": 52.7,
+    "postal_revenue_yoy_pct": 27.4
+  },
+  "np_api_snapshot": {
+    "working_points": 54992,
+    "ref_created_before_2026": 46966,
+    "np_reported_jan_2026": 50003,
+    "validation_pct_vs_np_2026": 94,
+    "ref_created_before_2025": 35491,
+    "np_implied_2025": 37755,
+    "validation_pct_vs_np_2025": 94,
+    "hromada_mapped_pct": 85
+  },
+  "spearman_hromada_join_n": 1367,
+  "spearman": {
+    "leg_pct_vs_np_points_ratio": 0.26,
+    "fop_pct_vs_np_points_ratio": 0.326,
+    "fop_pct_vs_np_branches_ratio": 0.347
+  },
+  "zone_median_np_branches_ratio": {
+    "west": 1.8,
+    "centre": 1.855,
+    "frontline": 1.0
+  },
+  "fop_quintile_median_np_branches_ratio": [1.0, 1.71, 1.8, 1.88, 1.8],
+  "top_business_growth_np_examples": [
+    { "name": "Сокільницька", "oblast": "Львівська", "pre2021_points": 4, "now_points": 125, "leg_pct": 30.1 },
+    { "name": "Гатненська", "oblast": "Київська", "pre2021_points": 14, "now_points": 192, "leg_pct": 24.7 },
+    { "name": "Гостомельська", "oblast": "Київська", "pre2021_points": 2, "now_points": 119, "leg_pct": 25.2 },
+    { "name": "Поляницька", "oblast": "Івано-Франківська", "pre2021_points": 4, "now_points": 38, "leg_pct": 62.7 },
+    { "name": "Шпанівська", "oblast": "Рівненська", "pre2021_points": 5, "now_points": 27, "leg_pct": 35.9 }
+  ]
+}
