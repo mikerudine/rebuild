@@ -30,7 +30,7 @@ const base = import.meta.env.BASE_URL;
     <p><strong>{t.chart.fetched}:</strong> {fetchedAt}</p>
     <p>
       <strong>{t.chart.data}:</strong>{' '}
-      <a href={`${base}${dataUrl.replace(/^\//, '')}`} download>{dataUrl.split('/').pop()}</a>
+      <a href={dataUrl} download>{dataUrl.split('/').pop()}</a>
     </p>
   </figcaption>
 </figure>
