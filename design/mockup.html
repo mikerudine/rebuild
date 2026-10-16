@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="uk"><head><meta charset="utf-8">
+<title>Hromada Atlas — low-fi wireframes (EXAMPLE DATA)</title>
+<style>
+ :root{--k:#222;--d:#555;--m:#888;--l:#bbb;--xl:#e4e4e4;--bg:#f6f6f6}
+ *{box-sizing:border-box} body{margin:0;background:#ddd;font:13px/1.35 "DejaVu Sans",Arial,sans-serif;color:var(--k)}
+ .screen{width:1280px;height:800px;margin:20px auto;background:var(--bg);position:relative;overflow:hidden;border:1px solid #999}
+ .solo .screen{margin:0;border:0} .solo .screen:not(.on){display:none}
+ header{height:64px;border-bottom:1px solid var(--l);display:flex;align-items:center;padding:0 20px;gap:18px;background:#fff}
+ header .t{font-weight:bold;font-size:16px} header .sub{color:var(--d);font-size:12px}
+ .tag{position:absolute;top:14px;right:16px;border:2px dashed var(--d);padding:3px 8px;font-weight:bold;font-size:11px;letter-spacing:.5px;background:#fff}
+ .num{display:inline-block;width:20px;height:20px;border-radius:50%;background:var(--k);color:#fff;text-align:center;font-weight:bold;font-size:11px;line-height:20px}
+ .notes{position:absolute;bottom:0;left:0;right:0;height:96px;border-top:1px solid var(--l);background:#fff;padding:8px 20px;font-size:11.5px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px 24px;color:var(--d)}
+ .notes div{display:flex;gap:8px;align-items:flex-start}
+ svg text{font-family:"DejaVu Sans",Arial,sans-serif}
+ .foot{position:absolute;bottom:100px;left:20px;font-size:10px;color:var(--m)}
+</style></head><body>
+<div id="root"></div>
+<script>
+// ======== ALL NUMBERS BELOW ARE INVENTED EXAMPLE DATA, NOT DERZHSTAT FIGURES ========
+const G={k:'#222',d:'#555',m:'#888',l:'#bbb',xl:'#e4e4e4',w:'#fff'};
+const yrs=[2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025];
+const R=(s)=>{let x=s;return()=>(x=(x*9301+49297)%233280)/233280};
+const rect=(x,y,w,h,f,o='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}" ${o}/>`;
+const txt=(x,y,s,o='')=>`<text x="${x}" y="${y}" font-size="11" fill="${G.d}" ${o}>${s}</text>`;
+const line=(x1,y1,x2,y2,o=`stroke="${G.m}"`)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" ${o}/>`;
+const badge=(x,y,n)=>`<g><circle cx="${x}" cy="${y}" r="10" fill="${G.k}"/><text x="${x}" y="${y+4}" font-size="11" font-weight="bold" fill="#fff" text-anchor="middle">${n}</text></g>`;
+const path=(pts,o)=>`<path d="M${pts.map(p=>p.join(',')).join('L')}" ${o}/>`;
+const shade=v=>{const c=Math.round(225-Math.max(0,Math.min(1,v))*190);return `rgb(${c},${c},${c})`};
+function box(x,y,w,h,title){return rect(x,y,w,h,'#fff',`stroke="${G.l}"`)+(title?txt(x+10,y+18,title,'font-weight="bold" fill="#222" font-size="12"'):'')}
+// trail chart = navigation breadcrumb rendered as stepped bars (zoom levels)
+function trail(steps,active){let s=`<svg width="560" height="48">`,x=0;steps.forEach((st,i)=>{const w=st.length*7+26,h=10+i*5;s+=rect(x,44-h,w,h,i==active?G.k:G.l)+`<text x="${x+6}" y="${40-h}" font-size="10" fill="${G.d}">${st}</text>`;x+=w+4});return s+'</svg>'}
+function road(x,y,w,h,vals,o={}){ // road bar: segmented timeline, shade = yearly growth
+ let s='';const sw=w/vals.length;vals.forEach((v,i)=>{s+=rect(x+i*sw,y,sw-1,h,shade(v),o.sel===i?`stroke="${G.k}" stroke-width="2.5"`:'')});
+ if(o.center)s+=line(x,y+h/2,x+w,y+h/2,`stroke="#fff" stroke-dasharray="6 5" stroke-width="1.5"`);
+ (o.pins||[]).forEach(p=>{const px=x+(p[0]+.5)*sw;s+=line(px,y-14,px,y,`stroke="${G.k}"`)+`<circle cx="${px}" cy="${y-16}" r="4" fill="${G.k}"/>`+txt(px+6,y-13,p[1],'font-size="10"')});
+ return s}
+function screen(id,title,sub,trailSteps,ta,svg,notes){return `<section class="screen" id="${id}"><header><div><div class="t">${title}</div><div class="sub">${sub}</div></div>${trail(trailSteps,ta)}</header>
+ <div class="tag">EXAMPLE DATA · WIREFRAME</div><svg width="1280" height="640" style="position:absolute;top:64px;left:0">${svg}</svg>
+ <div class="foot">Усі значення — вигадані приклади для ілюстрації. Джерела в продукті: Держстат SDMX, Open Budget (перевірити доступність на рівні громад).</div>
+ <div class="notes">${notes.map((n,i)=>`<div><span class="num">${i+1}</span><span>${n}</span></div>`).join('')}</div></section>`}
+const T=['Україна','Область','Громада','Село','Сегмент'];
+let out='';
+
+// ---------- S1 Atlas ----------
+{let s='';const r=R(3);
+ s+=box(20,12,250,520,'Області · фільтр-лінза');
+ const obl=['Закарпатська','Одеська','Миколаївська','Львівська','Вінницька','Полтавська','Київська','Черкаська','Чернівецька','Івано-Франк.','Хмельницька','Житомирська','Рівненська','Волинська','Тернопільська','Кіровоградська','Дніпропетровська','Сумська','Чернігівська','Запорізька*','Харківська*','Херсонська*'];
+ obl.forEach((o,i)=>{const v=20+r()*170;const y=40+i*21;s+=txt(30,y+12,o,'font-size="10"')+rect(130,y+2,v*.7,14,i<2?G.k:G.l)});
+ s+=badge(255,40,1)+txt(30,522,'* часткові дані (окупація/бойові дії)','font-size="9"');
+ s+=box(285,12,640,520,'Громади · road bars 2015→2025 (відтінок = зміна населення р/р)');
+ const names=['Квасівська (ex.)','Шабська (ex.)','Коблівська (ex.)','Берегівська (ex.)','Громада E (ex.)','Громада F (ex.)','Громада G (ex.)','Громада H (ex.)','Громада I (ex.)','Громада J (ex.)','Громада K (ex.)','Громада L (ex.)','Громада M (ex.)','Громада N (ex.)','Громада O (ex.)','Громада P (ex.)'];
+ names.forEach((n,i)=>{const y=44+i*29;const tr=1-i/16;const vals=yrs.map((_,k)=>Math.max(0,tr*(.3+k*.06)+r()*.25-.15));
+  s+=txt(295,y+14,n,`font-size="10.5" ${i==0?'font-weight="bold" fill="#222"':''}`)+road(410,y+2,400,16,vals,{});
+  s+=txt(820,y+14,(tr*14-4).toFixed(1)+'%','font-size="10"')+rect(860,y+4,Math.abs(tr*14-4)*4,12,tr*14-4>0?G.d:G.l)});
+ s+=rect(406,40,408,24,'none',`stroke="${G.k}" stroke-width="2" stroke-dasharray="4 3"`)+badge(900,52,2);
+ yrs.forEach((y,k)=>{if(k%2==0)s+=txt(410+k*36.4,520,y,'font-size="9"')});
+ s+=box(940,12,320,250,'Розподіл: зміна населення, %');
+ for(let i=0;i<16;i++){const h=10+Math.exp(-((i-6)**2)/12)*150;s+=rect(960+i*18,240-h,15,h,i>=9&&i<=13?G.d:G.l)}
+ s+=rect(1118,70,92,174,'none',`stroke="${G.k}" stroke-dasharray="4 3"`)+txt(1120,64,'brush = фільтр')+badge(1240,52,3);
+ s+=box(940,272,320,260,'Структура доходів (усі відібрані)');
+ [['ПДФО',.46],['Єдиний податок',.18],['Земля/майно',.16],['Трансферти',.20]].forEach((d,i)=>{const y=305+i*52;s+=txt(955,y,d[0])+rect(955,y+6,d[1]*560,20,[G.k,G.d,G.m,G.l][i])+txt(955+d[1]*560+6,y+21,Math.round(d[1]*100)+'%')});
+ s+=badge(1240,300,4);
+ out+=screen('s1','1 · Атлас громад','Вхід: країна → область → громада. Навігація лише через графіки',T,0,s,
+ ['Клік по бару області = фільтр; Shift+клік = додати до набору. Бар-лінза лишається зверху на всіх екранах.','Клік по road bar громади → екран «Шлях громади». Hover на сегменті року = мінітаблиця значень.','Brush на гістограмі звужує список; виділений діапазон стає «чипом» у trail-графіку вгорі.','Клік по сегменту структури доходів сортує список за цією часткою та відкриває екран 3.','Trail-графік угорі (сходинки) — це breadcrumb: висота = рівень деталізації, клік повертає назад.','Порожній стан: сірий road bar з пунктиром = немає даних у SDMX за рік.'])}
+
+// ---------- S2 Road ----------
+{let s='';const r=R(7);
+ s+=box(20,12,1240,170,'Квасівська громада (EXAMPLE) · шлях розвитку 2015→2025');
+ const vals=[.1,.05,.1,.25,.4,.3,.5,.6,.55,.75,.85];
+ s+=road(60,90,1100,46,vals,{center:1,sel:7,pins:[[2,'Створення ОТГ'],[4,'Бренд мінеральних вод'],[7,'Еко-туризм кластер'],[9,'Інвест-проєкт (ex.)']]});
+ [['Спад',0,3],['Розворот',3,6],['Зростання',6,11]].forEach(p=>{const x=60+p[1]*100,w=(p[2]-p[1])*100;s+=line(x,157,x+w-4,157,`stroke="${G.k}" stroke-width="3"`)+txt(x,174,'Фаза: '+p[0],'font-weight="bold"')});
+ yrs.forEach((y,k)=>s+=txt(95+k*100,150,y,'font-size="9"'));s+=badge(1200,110,1);
+ // linked small multiples
+ const mets=[['Населення, осіб','3 400 → 3 650'],['Власні доходи / особу, грн','2.1k → 6.8k'],['ФОП та підприємства','85 → 210'],['Капвидатки бюджету, %','6% → 19%']];
+ mets.forEach((m,i)=>{const y=196+i*84;s+=box(20,y,820,76,m[0]);let pts=yrs.map((_,k)=>[160+k*64,y+62-(i==0?(k<3?20-k*4:8+k*3):k*4+r()*10)]);
+  s+=path(pts,`fill="none" stroke="${G.k}" stroke-width="2"`)+rect(160+7*64-32,y+4,64,70,'rgba(0,0,0,.08)')+txt(30,y+40,m[1],'font-size="10"')});
+ s+=badge(820,210,2);
+ s+=box(855,196,405,328,'Сегмент 2022 → таблиця');
+ const rows=[['Показник','2022','Δ р/р','Ранг обл.'],['Населення','3 520','+1.2%','4 / 64'],['Власні дох./ос.','4 900','+18%','2 / 64'],['ПДФО, млн','11.3','+9%','6 / 64'],['Туристичний збір','0.42','+60%','1 / 64'],['Нові ФОП','27','+35%','3 / 64'],['Капвидатки','14%','+5 п.п.','8 / 64']];
+ rows.forEach((rw,i)=>{const y=225+i*30;if(i==0)s+=rect(865,y-4,385,26,G.xl);rw.forEach((c,j)=>s+=txt(875+[0,125,200,290][j],y+13,c,i==0?'font-weight="bold"':''));s+=line(865,y+22,1250,y+22,`stroke="${G.xl}"`)});
+ s+=rect(870,450,170,22,'#fff',`stroke="${G.d}"`)+txt(880,465,'mini-bar: частка в області');s+=rect(1050,454,120,14,G.xl)+rect(1050,454,48,14,G.d);
+ s+=txt(870,500,'↗ клік по рядку → цей показник у Порівнянні','font-size="10"')+badge(1240,210,3);
+ out+=screen('s2','2 · Шлях громади (road bar)','Клік по року/фазі = drill-in; усі графіки синхронізовані по часовій осі',T,2,s,
+ ['Road bar: сегмент = рік, відтінок = композитний індекс зростання (example). Піни = події з історії успіху; клік по фазі виділяє діапазон.','Малі мультиплі під тією ж віссю: клік по точці переносить фокус-рік; drag по осі = діапазон для таблиці.','Сегментна таблиця: обраний рік розгортається в компактну таблицю з дельтами та рангом в області.','Клік по піну відкриває картку-історію (текст + джерело) у вигляді тексту в межах графіку.','Подвійний клік по road bar → додати громаду в Порівняння (pin).','Вгору: клік на «Область» у trail-графіку.'])}
+
+// ---------- S3 Segment tables (budget) ----------
+{let s='';
+ s+=box(20,12,1240,520,'Бюджет громади (EXAMPLE) · стовпці = роки, сегменти = джерела доходів, млн грн');
+ const parts=[['ПДФО',G.k],['Єдиний податок',G.d],['Земля/майно',G.m],['Туристичний збір','#999'],['Трансферти',G.l]];
+ parts.forEach((p,i)=>s+=rect(40+i*150,36,12,12,p[1])+txt(58+i*150,46,p[0]));
+ const yy=[2019,2020,2021,2022,2023,2024,2025];
+ yy.forEach((y,k)=>{let base=470;const v=[8+k*1.2,3+k*.8,3+k*.3,.1+k*.12,9-k*.6];let x=k<3?60+k*84:(k==3?-999:830+(k-4)*84);if(k==3){s+=rect(300,470-v.reduce((p,q)=>p+q)*10,8,v.reduce((p,q)=>p+q)*10,G.d)+txt(296,490,y,'font-weight="bold"');return}
+  v.forEach((vv,j)=>{const h=vv*10;base-=h;s+=rect(x,base,56,h-1,parts[j][1])});s+=txt(x+14,490,y)});
+ // expanded inline table between 2021 and 2022
+ const ex=314;s+=rect(ex,70,500,420,'#fff',`stroke="${G.k}" stroke-width="1.5"`);
+ 
+ s+=txt(ex+12,92,'Сегмент: Єдиний податок · 2022 (розгорнуто в межах графіка)','font-weight="bold" fill="#222"');
+ const rows=[['Група платників','млн грн','частка','Δ р/р',''],['1 група (торгівля)','0.9','17%','+4%',.17],['2 група (послуги, туризм)','2.6','49%','+31%',.49],['3 група','1.5','28%','+12%',.28],['4 група (с/г)','0.3','6%','−3%',.06],['Разом','5.3','100%','+19%',1]];
+ rows.forEach((rw,i)=>{const y=110+i*32;if(i==0)s+=rect(ex+8,y-2,484,26,G.xl);for(let j=0;j<4;j++)s+=txt(ex+16+[0,190,270,340][j],y+15,rw[j],i==0||i==5?'font-weight="bold"':'');if(i>0)s+=rect(ex+400,y+4,rw[4]*80,14,G.d);s+=line(ex+8,y+26,ex+492,y+26,`stroke="${G.xl}"`)});
+ s+=txt(ex+12,330,'Спарклайн сегмента 2019–2025:')+path([0,1,2,3,4,5,6].map(i=>[ex+200+i*40,345-i*6-(i==3?6:0)]),`fill="none" stroke="${G.k}" stroke-width="2"`);
+ s+=rect(ex+12,380,150,26,G.xl,`stroke="${G.d}"`)+txt(ex+22,397,'▸ розгорнути 2-у групу');s+=rect(ex+175,380,150,26,G.xl,`stroke="${G.d}"`)+txt(ex+185,397,'⇄ порівняти з областю');s+=rect(ex+338,380,150,26,G.xl,`stroke="${G.d}"`)+txt(ex+348,397,'⨯ згорнути в стовпець');
+ s+=txt(ex+12,440,'Стовпець 2022 «розсунувся» в таблицю; 2023–2025 зсунулись вправо.','font-size="10"');
+ s+=badge(304,60,1)+badge(800,80,2)+badge(ex+12,368,3);
+ out+=screen('s3','3 · Сегментні таблиці','Будь-який сегмент графіка розкривається в компактну таблицю — без окремих сторінок',T,4,s,
+ ['Клік по сегменту стовпця (Єдиний податок 2022) — стовпець «розсувається» і показує таблицю на його місці.','Таблиця має вбудовані міні-бари та спарклайн — вона теж графік і її рядки клікабельні (вкладене розгортання, до 2 рівнів).','Дії — лише три, як «чипи» в межах таблиці: глибше / порівняти / згорнути. Esc або клік поза таблицею = згорнути.','Клік по легенді = ізолювати джерело доходу по всіх роках (стовпці перебудовуються).','Стовпці з даними вищого рівня (область) мають пунктирну рамку, якщо даних громади немає.','Клавіатура: ←/→ між сегментами, Enter розгортає (доступність).'])}
+
+// ---------- S4 Compare ----------
+{let s='';const r=R(11);
+ s+=box(20,12,820,330,'Порівняння · індекс власних доходів/особу (2015 = 100)');
+ const names=['Квасівська','Шабська','Коблівська','Медіана області'];
+ names.forEach((n,i)=>{const sl=[14,11,8,4][i];const pts=yrs.map((_,k)=>[70+k*64,300-k*sl-r()*12]);s+=path(pts,`fill="none" stroke="${[G.k,G.d,G.m,G.l][i]}" stroke-width="${i==0?3:2}" ${i==3?'stroke-dasharray="6 4"':''}`)+txt(pts[10][0]+8,pts[10][1]+4,n,'font-size="10"')});
+ s+=line(60,300,800,300)+txt(64,320,'2015')+txt(770,320,'2025');
+ s+=box(855,12,405,330,'Pinned · бари-легенда (клік = прибрати/фокус)');
+ names.slice(0,3).concat(['+ клік по road bar на екрані 1/2']).forEach((n,i)=>{const y=50+i*58;s+=i<3?rect(870,y,30,30,[G.k,G.d,G.m][i])+txt(910,y+12,n+' (ex.)','font-weight="bold"')+road(910,y+18,320,10,yrs.map(()=>r())):rect(870,y,360,30,'none',`stroke="${G.m}" stroke-dasharray="4 3"`)+txt(880,y+19,n)});
+ s+=box(20,352,620,180,'Slope: 2019 → 2025 · населення (тис.)');
+ [[3.4,3.65],[2.1,2.3],[4.0,3.8],[3.0,2.6]].forEach((v,i)=>{const a=512-(v[0]-2)*58,b=512-(v[1]-2)*58;s+=line(120,a,480,b,`stroke="${[G.k,G.d,G.m,G.l][i]}" stroke-width="2.5"`)+`<circle cx="120" cy="${a}" r="4"/><circle cx="480" cy="${b}" r="4"/>`+txt(40,a+4,v[0])+txt(490,b+4,v[1]+' '+names[i],'font-size="10"')});
+ s+=box(655,352,605,180,'Матриця показників · ранг (темніше = краще)');
+ ['Населення','Дох./ос.','ФОП','Капвид.','Туризм','R&D*'].forEach((m,j)=>{s+=txt(790+j*75,382,m,'font-size="10"');names.forEach((n,i)=>{if(j==0)s+=txt(668,404+i*30,n,'font-size="10"');s+=rect(790+j*75,392+i*30,60,22,j==5?'none':shade(r()),j==5?`stroke="${G.l}" stroke-dasharray="3 3"`:'')})});
+ s+=txt(668,526,'* R&D у Держстат — переважно рівень області; показано лише як контекст','font-size="9"');
+ s+=badge(820,30,1)+badge(1240,30,2)+badge(620,370,3)+badge(1240,370,4);
+ out+=screen('s4','4 · Порівняння','Набір будується кліками: pin з road bar, Shift+клік по барах, brush на scatter',T,2,s,
+ ['Лінії індексовані; клік по лінії = фокус (інші бліднуть), подвійний клік = відкрити шлях громади.','Легенда — це бари з мініатюрним road bar; клік прибирає громаду з набору, drag змінює порядок.','Slope-чарт: клік по точці міняє базовий рік для всіх графіків екрану.','Клітинка матриці → розгортається в сегментну таблицю (ряд значень + джерело SDMX-коду).','Порожня клітинка з пунктиром = показник недоступний на цьому рівні (чесно, без імпутації).','Максимум 5 громад у наборі; медіана області завжди як референс.'])}
+
+// ---------- S5 Forecast ----------
+{let s='';
+ s+=box(20,12,820,520,'Прогноз населення · Квасівська (EXAMPLE), тис. осіб');
+ const X=k=>70+k*44,Y=v=>460-(v-2.8)*280;const hist=[3.40,3.38,3.33,3.36,3.42,3.45,3.50,3.52,3.56,3.61,3.65];
+ s+=path(hist.map((v,k)=>[X(k),Y(v)]),`fill="none" stroke="${G.k}" stroke-width="2.5"`);
+ const fy=[0,1,2,3,4,5],med=fy.map(i=>3.65+i*.04),up=fy.map(i=>3.65+i*.085),lo=fy.map(i=>3.65-i*.05);
+ s+=`<path d="M${fy.map(i=>[X(10+i),Y(up[i])].join(',')).join('L')}L${fy.slice().reverse().map(i=>[X(10+i),Y(lo[i])].join(',')).join('L')}Z" fill="${G.xl}"/>`;
+ s+=`<path d="M${fy.map(i=>[X(10+i),Y(3.65+i*.065)].join(',')).join('L')}L${fy.slice().reverse().map(i=>[X(10+i),Y(3.65-i*.02)].join(',')).join('L')}Z" fill="${G.l}"/>`;
+ s+=path(fy.map(i=>[X(10+i),Y(med[i])]),`fill="none" stroke="${G.k}" stroke-width="2" stroke-dasharray="6 4"`);
+ [[up[5],'P90'],[med[5],'медіана'],[lo[5],'P10']].forEach(h=>s+=rect(X(15)-7,Y(h[0])-7,14,14,'#fff',`stroke="${G.k}" stroke-width="2"`)+txt(X(15)+12,Y(h[0])+4,h[1]+' '+h[0].toFixed(2)));
+ s+=line(X(10),40,X(10),470,`stroke="${G.d}" stroke-dasharray="2 3"`)+txt(X(10)+4,50,'2025 · факт | прогноз');
+ [2015,2018,2021,2024,2027,2030].forEach((y,i)=>s+=txt(X((y-2015))-12,488,y,'font-size="10"'));
+ s+=txt(40,515,'Модель (концепт): когортна + сценарні драйвери; смуга = невизначеність, не точність.','font-size="10"');
+ s+=box(855,12,405,270,'Драйвери сценарію · тягни бар');
+ [['Чиста міграція, ос./рік',.55,'+30'],['Інвестиції, млн грн',.7,'45'],['Турпотік, тис.',.62,'18'],['Природний приріст',.3,'−12']].forEach((d,i)=>{const y=50+i*56;s+=txt(870,y,d[0])+rect(870,y+8,330,18,G.xl)+rect(870,y+8,330*d[1],18,G.d)+rect(870+330*d[1]-4,y+4,8,26,G.k)+txt(1208,y+22,d[2])});
+ s+=box(855,292,405,240,'Чутливість (tornado) до 2030');
+ [['Міграція',90],['Турпотік',60],['Інвестиції',45],['Природний приріст',30]].forEach((d,i)=>{const y=330+i*44;s+=txt(870,y+14,d[0],'font-size="10"')+rect(1060-d[1],y,d[1],22,G.m)+rect(1060,y,d[1]*.8,22,G.d)});s+=line(1060,320,1060,510,`stroke="${G.k}"`);
+ s+=badge(X(15)-30,Y(up[5])-12,1)+badge(1240,30,2)+badge(1240,310,3);
+ out+=screen('s5','5 · Прогнози','Смуга проєкції редагується прямо на графіку; драйвери — теж бари',T,3,s,
+ ['Ручки P10/медіана/P90 на 2030: drag вгору/вниз → модель зворотно підбирає драйвери (видно зміщення барів праворуч).','Бари-драйвери: drag змінює припущення; смуга перераховується наживо, попередня лишається як тінь.','Tornado: клік по бару фіксує драйвер (замок) і показує його внесок у смузі штриховкою.','Клік по історичному відрізку = «якби тренд того періоду тривав» (швидкий сценарій із фази road bar).','Сценарій зберігається як новий road bar у Порівнянні (пунктирні сегменти = прогноз).','Скинути — подвійний клік по смузі. Завжди підпис «прогноз, не факт».'])}
+
+// ---------- S6 Stories ----------
+{let s='';const r=R(5);
+ s+=box(20,12,820,520,'Історії зростання · громади: зміна населення (x) vs зміна власних доходів/особу (y)');
+ s+=line(80,480,820,480)+line(80,40,80,480)+line(400,40,400,480,`stroke="${G.l}" stroke-dasharray="3 3"`)+line(80,260,820,260,`stroke="${G.l}" stroke-dasharray="3 3"`);
+ s+=txt(700,500,'населення, % →')+txt(88,52,'↑ дох./ос., %');
+ for(let i=0;i<110;i++){const x=90+r()*560,y=180+r()*290;s+=`<circle cx="${x}" cy="${y}" r="${3+r()*5}" fill="${G.l}"/>`}
+ const wine=[[520,125,'Шабська (ex.)'],[600,170,'Коблівська (ex.)'],[490,200,'Берегівська (ex.)'],[630,115,'Громада W4 (ex.)']];
+ s+=`<ellipse cx="565" cy="160" rx="125" ry="75" fill="none" stroke="${G.k}" stroke-width="2" stroke-dasharray="6 4"/>`+txt(450,78,'Кластер: виноробство (тег історії)','font-weight="bold"');
+ wine.forEach(w=>s+=`<circle cx="${w[0]}" cy="${w[1]}" r="9" fill="${G.d}"/>`+txt(w[0]+12,w[1]+4,w[2],'font-size="9"'));
+ s+=`<circle cx="740" cy="230" r="11" fill="${G.k}"/>`+txt(700,256,'Квасівська (ex.)','font-weight="bold"');
+ s+=box(855,12,405,520,'Кластер «Виноробство» · road bars');
+ wine.forEach((w,i)=>{const y=50+i*70;s+=txt(870,y,w[2],'font-weight="bold"')+road(870,y+10,360,18,yrs.map((_,k)=>.1+k*.07+r()*.15),{pins:i==0?[[6,'фестиваль']]:[]})});
+ s+=box(865,340,385,180,'Тег-бари · чинники історій');
+ [['Виноробство',4],['Туризм',7],['Мінеральні води',2],['Переробка с/г',5],['Релоковані бізнеси',6]].forEach((t,i)=>{const y=372+i*28;s+=txt(878,y+12,t[0],'font-size="10"')+rect(1010,y,t[1]*30,18,i==0?G.k:G.l)});
+ s+=badge(700,78,1)+badge(1240,30,2)+badge(1240,358,3);
+ out+=screen('s6','6 · Історії зростання','Вхід через графік: аномалії зростання → кластер → шлях громади',T,1,s,
+ ['Lasso/клік по кластеру на scatter → набір громад; праворуч їхні road bars. Клік по точці = шлях громади.','Road bars історій синхронізовані за віссю; піни = ключові події (з редакційних матеріалів, з посиланням на джерело).','Тег-бари = фільтр за чинником: клік підсвічує точки з тегом на scatter; Shift = перетин тегів.','Квадранти (пунктир) — медіани області; hover на квадранті = його сегментна таблиця.','Кластер «виноробство» — приклад: склад тегів формує редакція, не алгоритм.','Звідси → Порівняння (pin набору) або → Прогноз для обраної громади.'])}
+
+document.getElementById('root').innerHTML=out;
+const h=location.hash.slice(1);if(h){document.body.classList.add('solo');document.getElementById(h).classList.add('on')}
+</script></body></html>
