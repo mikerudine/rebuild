@@ -1,0 +1,163 @@
+---
+import type { Lang } from '@/i18n/ui';
+import s from '@/data/transport-summary.json';
+
+interface Props {
+  lang: Lang;
+  base: string;
+}
+
+const { lang, base } = Astro.props;
+const uk = lang === 'uk';
+const pct = (a: number, b: number) => `${b >= a ? '+' : ''}${(((b - a) / a) * 100).toFixed(1)}%`;
+---
+
+<div class="transport-explorer" data-lang={lang} data-base={base}>
+  <p class="lead">
+    {uk
+      ? 'Чи з’являються нові автобусні маршрути там, де росте бізнес? Відкриті реєстри маршрутів по всій країні майже не публікуються, тож тут — Івано-Франківська область, яка щороку викладає повний реєстр міжміських і приміських внутрішньообласних маршрутів, плюс національний реєстр ліцензій перевізників Укртрансбезпеки.'
+      : 'Do new bus routes appear where business grows? Open route registers are rarely published nationwide, so this page uses Ivano-Frankivsk oblast, which publishes its full intra-oblast intercity and suburban route register every year, plus the national Ukrtransbezpeka carrier licence register.'}
+  </p>
+
+  <section class="prose">
+    <h2>{uk ? 'Головне' : 'Key points'}</h2>
+    <ul>
+      <li>
+        {uk
+          ? `Мережа області скоротилась: ${s.if_routes_2019} → ${s.if_routes_2026} маршрутів (${pct(s.if_routes_2019, s.if_routes_2026)}), ${s.if_trips_2019} → ${s.if_trips_2026} оборотних рейсів на день (${pct(s.if_trips_2019, s.if_trips_2026)}), 2019 → 2026. Основний обвал — у реєстрі 2023 року; кількість автобусів майже не змінилась (${s.if_buses_2019} → ${s.if_buses_2026}).`
+          : `The oblast network shrank: ${s.if_routes_2019} → ${s.if_routes_2026} routes (${pct(s.if_routes_2019, s.if_routes_2026)}), ${s.if_trips_2019} → ${s.if_trips_2026} daily round trips (${pct(s.if_trips_2019, s.if_trips_2026)}), 2019 → 2026. The main drop is in the 2023 register; bus counts barely moved (${s.if_buses_2019} → ${s.if_buses_2026}).`}
+      </li>
+      <li>
+        {uk
+          ? 'Зростають окремі громади: Болехівська (рейси ×2), Коршівська, Старобогородчанська, Єзупільська, Нижньовербізька. Найбільше у відсотках втратили Верхнянська, Войнилівська, Ланчинська і Букачівська, в абсолютних числах — Тисменицька (−90 рейсів на день).'
+          : 'A few hromadas grow: Bolekhiv (trips ×2), Korshiv, Starobohorodchany, Yezupil, Nyzhnii Verbizh. The largest relative losses are in Verkhnia, Voinyliv, Lanchyn and Bukachivtsi; the largest absolute loss is Tysmenytsia (−90 daily trips).'}
+      </li>
+      <li>
+        {uk
+          ? `По Україні автобусних перевізників з чинною ліцензією: ${s.nat_bus_2018} (2018) → ${s.nat_bus_2022} (2022) → ${s.nat_bus_2023} (2023) → ${s.nat_bus_2026} (2026). Юросіб стабільно більшає: ${s.nat_legal_2018} → ${s.nat_legal_2026}; падіння 2023 року — анулювання ліцензій ФОП.`
+          : `Nationally, bus carriers with a valid licence: ${s.nat_bus_2018} (2018) → ${s.nat_bus_2022} (2022) → ${s.nat_bus_2023} (2023) → ${s.nat_bus_2026} (2026). Legal entities grow steadily: ${s.nat_legal_2018} → ${s.nat_legal_2026}; the 2023 drop is FOP licence cancellations.`}
+      </li>
+    </ul>
+  </section>
+
+  <div class="chart-block">
+    <h3>{uk ? 'Громади Івано-Франківщини: зміна рейсів 2019 → 2026' : 'Ivano-Frankivsk hromadas: change in trips 2019 → 2026'}</h3>
+    <div id="transport-ranking-chart" class="plot-target"></div>
+    <p class="chart-meta">
+      {uk
+        ? 'Оборотні рейси на день усіх маршрутів, що мають зупинку в громаді. Лише громади з ≥10 рейсами у 2019.'
+        : 'Daily round trips of all routes with a stop in the hromada. Only hromadas with ≥10 trips in 2019.'}
+    </p>
+  </div>
+
+  <div class="chart-block">
+    <h3>{uk ? 'Маршрути, рейси й автобуси по області' : 'Routes, trips and buses, oblast total'}</h3>
+    <div id="transport-series-chart" class="plot-target"></div>
+    <p class="chart-meta">
+      {uk
+        ? '2018 — зведений файл Укртрансбезпеки; 2022 — міжміські маршрути перенесено з реєстру 2021 (нового файлу не було); 2025 і 2026 реєстри ідентичні. Автобуси до 2025 — підрахунок держномерів у реєстрі.'
+        : '2018 is the Ukrtransbezpeka combined file; for 2022 intercity routes are carried from the 2021 register (no new file); the 2025 and 2026 registers are identical. Buses before 2025 are counted from plate numbers in the register.'}
+    </p>
+  </div>
+
+  <div class="chart-block">
+    <h3>{uk ? 'Відкриті й закриті маршрути' : 'Routes opened and closed'}</h3>
+    <div id="transport-events-chart" class="plot-target"></div>
+    <p class="chart-meta">
+      {uk
+        ? 'Порівняння сусідніх зрізів реєстру за назвою маршруту (нечітке зіставлення, щоб перейменування не рахувались двічі). Поле «відомості про відкриття/закриття» в реєстрах ІФ ОВА порожнє.'
+        : 'Adjacent register snapshots compared by route name (fuzzy matching so renames are not double-counted). The register field for opening/closing records is empty in the Ivano-Frankivsk files.'}
+    </p>
+  </div>
+
+  <div class="chart-block">
+    <h3>{uk ? 'Автобусні перевізники з чинною ліцензією, Україна' : 'Bus carriers with a valid licence, Ukraine'}</h3>
+    <div id="transport-national-chart" class="plot-target"></div>
+  </div>
+
+  <div class="chart-block">
+    <h3>{uk ? 'Перевізники за громадою реєстрації, Івано-Франківщина (2019 vs 2026)' : 'Carriers by registered hromada, Ivano-Frankivsk (2019 vs 2026)'}</h3>
+    <div id="transport-if-carriers-chart" class="plot-target"></div>
+    <p class="chart-meta">
+      {uk
+        ? `Лише перевізники, адреса яких є в реєстрі маршрутів ІФ або в ліцензійних зрізах (${s.if_carriers_located_2026} у 2026). По Україні до громади вдалося прив’язати лише ${s.bus_carriers_2026_hromada_pct}% автобусних перевізників, тому національної карти за громадами немає.`
+        : `Only carriers whose address appears in the Ivano-Frankivsk route register or licence snapshots (${s.if_carriers_located_2026} in 2026). Nationally only ${s.bus_carriers_2026_hromada_pct}% of bus carriers could be placed in a hromada, so there is no national hromada map.`}
+    </p>
+  </div>
+
+  <h2>{uk ? 'Усі громади Івано-Франківщини' : 'All Ivano-Frankivsk hromadas'}</h2>
+  <table class="data-table" id="transport-table">
+    <thead>
+      <tr>
+        <th>{uk ? 'Громада' : 'Hromada'}</th>
+        <th>{uk ? 'Маршр. 2019' : 'Routes 2019'}</th>
+        <th>{uk ? 'Маршр. 2026' : 'Routes 2026'}</th>
+        <th>{uk ? 'Рейси 2019' : 'Trips 2019'}</th>
+        <th>{uk ? 'Рейси 2026' : 'Trips 2026'}</th>
+        <th>{uk ? 'Рейси, %' : 'Trips, %'}</th>
+        <th>{uk ? 'Авт. 2019' : 'Buses 2019'}</th>
+        <th>{uk ? 'Авт. 2026' : 'Buses 2026'}</th>
+        <th>{uk ? 'Відкр.' : 'Opened'}</th>
+        <th>{uk ? 'Закр.' : 'Closed'}</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <section class="prose">
+    <h2>{uk ? 'Метод' : 'Method'}</h2>
+    <ul>
+      {uk ? (
+        <>
+          <li>Реєстри міжміських і приміських внутрішньообласних автобусних маршрутів ІФ ОВА ({s.snapshots} зрізів 2018–2026) у формі, затвердженій Мінінфраструктури: назва, протяжність, розклад з усіма зупинками, кількість задіяних і резервних автобусів, перевізник, договір.</li>
+          <li>Рейси: поле «щоденна кількість оборотних рейсів», а де воно порожнє — кількість блоків розкладу (збіг із заповненим полем — 87%).</li>
+          <li>Зупинки зіставлено з КАТОТТГ у межах області ({s.stop_names_matched} з {s.stop_names} назв, {s.stop_occurrences_matched_pct}% усіх зупинок; неоднозначні назви вирішено за районом решти зупинок маршруту). Маршрут зараховується кожній громаді, де має зупинку.</li>
+          <li>Ліцензії: квартальні зрізи реєстру Укртрансбезпеки 2018–2022 (data.gov.ua) і повний поточний реєстр з відкритого API ({s.live_register_records} записів, {s.fetched}): дата початку виду діяльності та дата анулювання. Перевізник активний у році, якщо мав чинну ліцензію на автобусні перевезення на кінець року.</li>
+        </>
+      ) : (
+        <>
+          <li>Ivano-Frankivsk oblast administration registers of intra-oblast intercity and suburban bus routes ({s.snapshots} snapshots 2018–2026) in the Ministry of Infrastructure form: name, length, timetable with every stop, assigned and reserve buses, carrier, contract.</li>
+          <li>Trips: the “daily round trips” field, or the number of timetable blocks where it is empty (87% agreement where both exist).</li>
+          <li>Stops matched to KATOTTG within the oblast ({s.stop_names_matched} of {s.stop_names} names, {s.stop_occurrences_matched_pct}% of stop occurrences; ambiguous names resolved by the rayon of the route’s other stops). A route counts for every hromada where it stops.</li>
+          <li>Licences: quarterly Ukrtransbezpeka register snapshots 2018–2022 (data.gov.ua) and the full current register from the open API ({s.live_register_records} records, {s.fetched}): activity start date and cancellation date. A carrier is active in a year if it held a valid bus licence at year end.</li>
+        </>
+      )}
+    </ul>
+    <h2>{uk ? 'Застереження' : 'Caveats'}</h2>
+    <ul>
+      {uk ? (
+        <>
+          <li>Реєстр показує договори, а не фактичні рейси: маршрут може формально існувати, але не обслуговуватись.</li>
+          <li>Реєстри оновлюються нерегулярно (2023 = 2024 для приміських, 2025 = 2026), тож зміни концентруються в окремих роках.</li>
+          <li>Ліцензії не містять кількості автобусів чи місць — лише перевізника, вид діяльності й дати.</li>
+          <li>Відкритий ЄДР більше не містить адрес (юрособи) і кодів РНОКПП (ФОП), тому громаду перевізника можна визначити лише з власних адрес реєстрів.</li>
+          <li>Міжобласні маршрути (реєстр Укртрансбезпеки) і міські маршрути сюди не входять.</li>
+        </>
+      ) : (
+        <>
+          <li>The register lists contracts, not trips actually run: a route can exist on paper without service.</li>
+          <li>Registers are updated irregularly (2023 = 2024 for suburban, 2025 = 2026), so changes cluster in particular years.</li>
+          <li>Licences carry no vehicle or seat counts — only carrier, activity type and dates.</li>
+          <li>The open business register (ЄДР) no longer includes addresses (legal entities) or tax IDs (FOPs), so a carrier’s hromada comes only from addresses in the registers themselves.</li>
+          <li>Interregional routes (Ukrtransbezpeka register) and city routes are not included.</li>
+        </>
+      )}
+    </ul>
+  </section>
+
+  <p class="chart-meta">
+    {uk ? 'Джерела:' : 'Sources:'}{' '}
+    <a href="https://data.gov.ua/dataset/0ffadb43-a4a3-4650-be7b-e14c3be1dc9c">{uk ? 'Реєстр внутрішньообласних маршрутів ІФ ОВА' : 'Ivano-Frankivsk intra-oblast route register'}</a>,{' '}
+    <a href="https://data.gov.ua/dataset/474dbf54-1dfd-497f-b03e-23aa7a1bac82">{uk ? 'реєстр маршрутів Укртрансбезпеки (ІФ 2018)' : 'Ukrtransbezpeka route register (IF 2018)'}</a>,{' '}
+    <a href="https://data.gov.ua/dataset/716cd7d6-518a-465e-aa8e-cf971233a8da">{uk ? 'реєстр ліцензій Укртрансбезпеки (зрізи 2018–2022)' : 'Ukrtransbezpeka licence register (2018–2022 snapshots)'}</a>,{' '}
+    <a href="https://middleware.dsbt.gov.ua/api/opendata/lc_licenses">{uk ? 'відкритий API ліцензій' : 'open licence API'}</a>, {uk ? 'КАТОТТГ. CSV:' : 'KATOTTG. CSV:'}{' '}
+    <a href={`${base}data/transport_if_hromada_year.csv`}>transport_if_hromada_year.csv</a>,{' '}
+    <a href={`${base}data/transport_if_hromada_growth.csv`}>transport_if_hromada_growth.csv</a>,{' '}
+    <a href={`${base}data/transport_carriers_ukraine_year.csv`}>transport_carriers_ukraine_year.csv</a>.
+  </p>
+</div>
+
+<script>
+  import { initTransportExplorer } from '@/lib/transport-explorer-client';
+  initTransportExplorer();
+</script>
