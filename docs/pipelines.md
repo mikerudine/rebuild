@@ -24,3 +24,4 @@ To publish a new site dataset: copy CSV into `public/data/`, wire a page + clien
 
 ## Oblast dashboard
 `python3 /workspace/village-app/dashboard/build_dashboard.py [UA26 ivano-frankivsk]` — reads analysis/, retail/, postal/ (incl. weekly NP snapshots), horeca/, vacancies/ and `public/data/osm_hromada_food_counts.csv`; writes `public/data/oblast/<slug>.json`, `coverage_score.csv` and `load_<slug>.sql` (apply via Supabase execute_sql). Re-run after each weekly NP snapshot to refresh.
+- The dashboard builder also reads `public/data/transport_if_*.csv` and `transport_carriers_*.csv` from the repo checkout (same data as `rebuild.transport_if_hromada_year` / `transport_carriers_hromada_year`); rerun it after the transport pipeline refreshes. The SQL recreates `oblast_dashboard_kpi/_hromada` (new cols: note_uk/note_en, trips_2019, trips_pct, routes_chg) and re-applies RLS.

@@ -12,3 +12,4 @@
 - Data: `public/data/oblast/<slug>.json` (KPI tiles, hromada table, series, rule-based successes/problems, coverage scores).
 - First oblast: `ivano-frankivsk` (UA26). To add another: run the builder with a new KATOTTG prefix + slug, copy the two page files, add the work.ua city/EN name mappings in the script if missing.
 - Links to `/transport/` automatically once that page exists (HEAD check).
+- Transport (IF only, since 2026-10-19): tiles for routes / daily trips / buses 2019→2026, routes opened/closed, carriers based in the oblast (vs Ukraine licence trend); hromada columns `trips_pct`, `routes_chg`; chart "bus transport index 2019=100". Chain-store tile = ATB corrected for OSM completeness (primary) + official-list count; raw OSM only as a footnote.

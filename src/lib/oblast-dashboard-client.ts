@@ -39,7 +39,7 @@ export async function initOblastDashboard() {
     div.className = `od-tile ${k.good === true ? 'good' : k.good === false ? 'bad' : ''}`;
     const nat = k.national_change_pct === null ? '' : ` · ${uk ? 'Україна' : 'Ukraine'} ${sg(k.national_change_pct)}`;
     div.innerHTML = `<div class="l">${uk ? k.label_uk : k.label_en}</div><div class="v">${fmt(k.value)}${k.unit ? ' ' + (uk ? k.unit : 'UAH') : ''}</div>
-      <div class="c"><b>${sg(k.change_pct)}</b> ${uk ? 'до' : 'vs'} ${k.base_label}${nat}</div>`;
+      <div class="c">${k.change_pct === null ? k.base_label : `<b>${sg(k.change_pct)}</b> ${uk ? 'до' : 'vs'} ${k.base_label}${nat}`}</div>${k.note_uk ? `<div class="c n">${uk ? k.note_uk : k.note_en}</div>` : ''}`;
     tiles.append(div);
   }
   const li = (id: string, arr: Row[]) => { const ul = root.querySelector(id)!; for (const s of arr) { const e = document.createElement('li'); e.textContent = uk ? s.uk : s.en; ul.append(e); } };
@@ -49,7 +49,14 @@ export async function initOblastDashboard() {
   lines(root.querySelector('#od-c-fop'), s.bizreg.filter((r: Row) => r.ind === 'REG_INDIV_ENT'), 'year', 'index', lang);
   lines(root.querySelector('#od-c-leg'), s.bizreg.filter((r: Row) => r.ind === 'REG_LEG_ENT'), 'year', 'index', lang);
   lines(root.querySelector('#od-c-sal'), s.workua, 'month', 'salary', lang);
-  lines(root.querySelector('#od-c-st'), s.stores, 'year', 'index', lang);
+  const tc = root.querySelector('#od-c-tr') as HTMLElement | null;
+  if (tc && s.transport?.length) {
+    const L: Record<string, string> = uk ? { routes: 'Маршрути', trips: 'Рейси/добу', buses: 'Автобуси', carriers_ua: 'Перевізники (Україна)' } : { routes: 'Routes', trips: 'Daily trips', buses: 'Buses', carriers_ua: 'Carriers (Ukraine)' };
+    const d = s.transport.map((r: Row) => ({ ...r, m: L[r.metric] }));
+    tc.replaceChildren(Plot.plot({ width: Math.min(460, tc.clientWidth || 460), height: 220, marginLeft: 44, x: { label: null, tickFormat: 'd' }, y: { label: null, grid: true },
+      color: { domain: Object.values(L), range: ['#1f6feb', '#e36209', '#2da44e', '#999'], legend: true },
+      marks: [Plot.ruleY([100]), Plot.lineY(d, { x: 'year', y: 'index', stroke: 'm', strokeWidth: 2 }), Plot.dot(d, { x: 'year', y: 'index', fill: 'm', r: 2, tip: true })] }));
+  } else if (tc) tc.closest('.chart-block')?.remove();
 
   // hromada table
   const cols: [string, string, string, boolean][] = [
@@ -58,6 +65,7 @@ export async function initOblastDashboard() {
     ['composite', 'Композит', 'Composite', true], ['stores_official', 'Магазини мереж (офіц.)', 'Chain stores (official)', true],
     ['stores_chg', 'Магазини OSM 21→26', 'OSM stores 21→26', true], ['np_now', 'Точки NP', 'NP points', true],
     ['np_ratio', 'NP зараз / до 2021', 'NP now / pre-2021', true], ['np_net_weeks', 'NP нетто за тижні', 'NP net, weeks', true],
+    ['trips_pct', 'Рейси/добу 19→26, %', 'Daily trips 19→26, %', true], ['routes_chg', 'Маршрути 19→26', 'Routes 19→26', true],
   ];
   const H: Row[] = data.hromadas;
   const med: Record<string, number> = {};
