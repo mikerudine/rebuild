@@ -12,6 +12,9 @@ Scripts live on the bot box at `/workspace/village-app/` (Python 3, pandas, requ
 | HoReCa | `cd horeca && python3 fetch_all.py; python3 ohsome_oblast.py; python3 ohsome_hrom.py` | horeca CSVs, load.sql |
 | Nova Poshta (one-off) | `cd postal && python3 pull_np.py && python3 final.py` | np_* CSVs |
 | **NP weekly** | `cd postal && python3 weekly_snapshot.py [YYYY-MM-DD]` | snapshots/: raw, points, changes, hromada weekly, summary, sql_<d>/ |
+| Transport: IF routes | `cd transport && python3 if_parse.py && python3 if_build.py` (raw files in `if_raw/`, loader `if_load.py`) | if_routes_raw.csv → out/transport_if_routes.csv, out/transport_if_hromada_year.csv, out/if_route_events.csv, out/if_stop_match.csv |
+| Transport: licences | `cd transport/lic && ./fetch_live.sh && python3 extract_snapshots.py && python3 build_carriers.py`; then `cd .. && python3 carriers_geo.py` (uses `geocode.py`) | carriers.csv, carrier_year.csv → out/transport_carriers_hromada_year.csv |
+| Transport: Supabase + site | `python3 gen_sql.py` → apply `sql/ddl_transport.sql` (apply_migration) + `sql/load_*.sql` (execute_sql); `python3 site_data.py` writes `public/data/transport_*.csv` + `src/data/transport-summary.json` in a repo checkout at /workspace/rebuild; `python3 check_page.py <url>` = headless chart check | rebuild.transport_* tables, /transport/ page |
 | KATOTTG lookup | `python3 lookup/build_lookup.py` | katottg_lookup.csv + sql |
 | Supabase loads | `python3 supabase/gen.py` → apply `ddl.sql`, `load_*.sql` via Supabase MCP `execute_sql` | schema `rebuild` |
 | Kaggle | `~/.local/bin/kaggle datasets version -p kaggle/ -m "msg"` | Kaggle dataset |

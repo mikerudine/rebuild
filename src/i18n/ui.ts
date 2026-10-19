@@ -14,6 +14,7 @@ export const ui = {
       retail: 'Магазини мереж',
       horeca: 'Заклади харчування',
       postal: 'Пошта і посилки',
+      transport: 'Транспорт',
       data: 'Дані',
       methodology: 'Методологія',
     },
@@ -35,6 +36,9 @@ export const ui = {
       ctaRetail: 'Магазини мереж',
       ctaHoreca: 'Заклади харчування',
       ctaPostal: 'Пошта і посилки',
+      ctaTransport: 'Автобусні маршрути',
+      teaserTransportTitle: 'Автобусні маршрути',
+      teaserTransportText: 'Маршрути, рейси й автобуси в громадах Івано-Франківщини 2018–2026 і ліцензовані перевізники по Україні.',
       teaserRetailTitle: 'Магазини мереж',
       teaserRetailText: 'OSM + офіційні списки ATB: де зростають магазини мереж 2021→2026.',
       teaserHorecaTitle: 'Заклади харчування',
@@ -71,6 +75,10 @@ export const ui = {
       title: 'Заклади харчування',
       lead: 'KVED I (їжа та розміщення) у бізнес-реєстрі та точки харчування в OSM.',
     },
+    transport: {
+      title: 'Автобусні маршрути та перевізники',
+      lead: 'Реєстр внутрішньообласних маршрутів Івано-Франківщини 2018–2026 по громадах і реєстр ліцензій перевізників Укртрансбезпеки.',
+    },
     postal: {
       title: 'Пошта і посилки',
       lead: 'Проксі логістики: зростання мережі Nova Poshta по громадах (Ref UUID до 2021 vs зараз) та кореляція зі зростанням юросіб і ФОП; NCEC і NP — національний контекст.',
@@ -105,6 +113,7 @@ export const ui = {
       retail: 'Chain stores',
       horeca: 'Food service',
       postal: 'Mail & parcels',
+      transport: 'Transport',
       data: 'Data',
       methodology: 'Methodology',
     },
@@ -126,6 +135,9 @@ export const ui = {
       ctaRetail: 'Chain stores',
       ctaHoreca: 'Food service',
       ctaPostal: 'Mail & parcels',
+      ctaTransport: 'Bus routes',
+      teaserTransportTitle: 'Bus routes',
+      teaserTransportText: 'Routes, trips and buses in Ivano-Frankivsk hromadas 2018–2026, plus licensed carriers across Ukraine.',
       teaserRetailTitle: 'Chain stores',
       teaserRetailText: 'OSM plus official ATB lists: where chain stores grew 2021→2026.',
       teaserHorecaTitle: 'Food service',
@@ -161,6 +173,10 @@ export const ui = {
     horeca: {
       title: 'Food service',
       lead: 'KVED section I in the business register and OSM food amenity points.',
+    },
+    transport: {
+      title: 'Bus routes and carriers',
+      lead: 'Ivano-Frankivsk intra-oblast bus route register 2018–2026 by hromada, and the Ukrtransbezpeka carrier licence register.',
     },
     postal: {
       title: 'Mail & parcels',
