@@ -21,3 +21,6 @@ Scripts live on the bot box at `/workspace/village-app/` (Python 3, pandas, requ
 
 **Weekly NP snapshot**: scheduled routine every **Monday 04:17 Kyiv**. First run 2026-10-12: 54,993 points, 2 openings, 1 closure. Silent unless failure/notable change.
 To publish a new site dataset: copy CSV into `public/data/`, wire a page + client module, push.
+
+## Oblast dashboard
+`python3 /workspace/village-app/dashboard/build_dashboard.py [UA26 ivano-frankivsk]` — reads analysis/, retail/, postal/ (incl. weekly NP snapshots), horeca/, vacancies/ and `public/data/osm_hromada_food_counts.csv`; writes `public/data/oblast/<slug>.json`, `coverage_score.csv` and `load_<slug>.sql` (apply via Supabase execute_sql). Re-run after each weekly NP snapshot to refresh.

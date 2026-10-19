@@ -33,3 +33,8 @@ Dataset `mikerudine/rebuild-ukraine-hromada-growth` ("Ukraine Hromada Growth (re
 ## Blocked
 robota.ua (Cloudflare), OpenBudget, Ukrposhta (API needs a token). data.gov.ua **CKAN API now works** from the box (2026-10-19). mtu.gov.ua, uz.gov.ua, bus.com.ua unreachable; busfor.ua, booking.uz.gov.ua 403.
 No hromada-level population data found.
+
+## Oblast dashboard tables (Supabase `rebuild`, RLS on, public read, writes revoked)
+- `rebuild.oblast_dashboard_kpi` — per oblast KPI: value, base, change %, national change %, source, as_of.
+- `rebuild.oblast_dashboard_hromada` — per hromada indicators (legal/FOP growth, composite, chain stores official/OSM, NP points/ratio/weekly net, OSM food counts).
+- `rebuild.oblast_data_coverage` — per-oblast count of sources with data (used to choose the oblast).

@@ -1,0 +1,58 @@
+---
+import type { Lang } from '@/i18n/ui';
+interface Props { lang: Lang; base: string; slug: string; }
+const { lang, base, slug } = Astro.props;
+const uk = lang === 'uk';
+---
+<div class="oblast-dash" data-lang={lang} data-base={base} data-slug={slug}>
+  <p class="lead">{uk
+    ? 'Панель показників області як у бізнес-звіті: кожен показник порівнюється з базовим роком і з середнім по Україні. Зелене — краще за країну (або за медіану області для громад), червоне — гірше.'
+    : 'An oblast KPI panel in the style of a business report: every indicator is compared with its baseline year and with the national figure. Green means better than the country (or the oblast median for hromadas), red means worse.'}</p>
+  <p class="chart-meta" id="od-transport-link"></p>
+  <div class="od-tiles" id="od-tiles"></div>
+  <div class="od-lists">
+    <section class="od-list od-list--good"><h2>{uk ? 'Успіхи' : 'Successes'}</h2><ul id="od-succ"></ul></section>
+    <section class="od-list od-list--bad"><h2>{uk ? 'Проблеми' : 'Problems'}</h2><ul id="od-prob"></ul></section>
+  </div>
+  <h2>{uk ? 'Динаміка проти України' : 'Trends vs Ukraine'}</h2>
+  <div class="od-charts">
+    <div class="chart-block"><h3>{uk ? 'ФОП, індекс 2021=100' : 'FOPs, index 2021=100'}</h3><div id="od-c-fop" class="plot-target"></div></div>
+    <div class="chart-block"><h3>{uk ? 'Юрособи, індекс 2021=100' : 'Legal entities, index 2021=100'}</h3><div id="od-c-leg" class="plot-target"></div></div>
+    <div class="chart-block"><h3>{uk ? 'Медіанна зарплата work.ua, грн' : 'work.ua median salary, UAH'}</h3><div id="od-c-sal" class="plot-target"></div></div>
+    <div class="chart-block"><h3>{uk ? 'Магазини мереж (OSM), індекс 2021=100' : 'Chain stores (OSM), index 2021=100'}</h3><div id="od-c-st" class="plot-target"></div></div>
+  </div>
+  <h2>{uk ? 'Громади області' : 'Hromadas of the oblast'}</h2>
+  <p class="chart-meta">{uk ? 'Колір клітинки: зелений — вище медіани області, червоний — нижче. Клік на заголовок сортує.' : 'Cell colour: green is above the oblast median, red is below. Click a header to sort.'}</p>
+  <div class="od-table-wrap"><table class="data-table od-table" id="od-table"><thead></thead><tbody></tbody></table></div>
+  <section class="prose">
+    <h2>{uk ? 'Метод і свіжість даних' : 'Method and data freshness'}</h2>
+    <ul>{uk ? (<>
+      <li>Плитки: значення, зміна до базового періоду (вказано під числом) і та сама зміна по Україні. Зелене, якщо область зросла більше за країну.</li>
+      <li>Успіхи / проблеми формуються автоматично: кожен показник, де область випереджає країну, йде в «успіхи», де відстає — у «проблеми»; плюс три громади-лідери й аутсайдери за юрособами, громади з падінням юросіб і громади без магазинів великих мереж.</li>
+      <li>Точки Nova Poshta «до 2021» відновлені з дати в UUIDv1 Ref і не враховують закриті точки; національна цифра роздута великими містами з поштоматами.</li>
+      <li>work.ua — лише обласний центр; OSM недооцінює старі роки (див. сторінку «Ритейл»).</li>
+    </>) : (<>
+      <li>Tiles: value, change against the baseline period (shown under the number) and the same change for Ukraine. Green if the oblast grew more than the country.</li>
+      <li>Successes / problems are rule-based: any indicator where the oblast beats the country goes to successes, any where it lags goes to problems; plus the top-3 and bottom-3 hromadas by legal entities, hromadas losing legal entities, and hromadas with no major-chain store.</li>
+      <li>Nova Poshta "pre-2021" points are recovered from the UUIDv1 Ref date and miss closed points; the national figure is inflated by big-city postomats.</li>
+      <li>work.ua covers only the oblast centre; OSM under-counts early years (see the Retail page).</li>
+    </>)}</ul>
+    <table class="data-table" id="od-sources"><thead><tr><th>{uk ? 'Показник' : 'Indicator'}</th><th>{uk ? 'Джерело' : 'Source'}</th><th>{uk ? 'Дата даних' : 'Data as of'}</th></tr></thead><tbody></tbody></table>
+    <p class="chart-meta" id="od-why"></p>
+  </section>
+</div>
+<style is:global>
+.od-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:16px 0}
+.od-tile{border:1px solid #ddd;border-left:6px solid #999;border-radius:8px;padding:10px 12px;background:#fff}
+.od-tile.good{border-left-color:#1a9850;background:#f1faf3}.od-tile.bad{border-left-color:#d73027;background:#fdf2f1}
+.od-tile .v{font-size:1.6rem;font-weight:700}.od-tile .l{font-size:.85rem;color:#444}.od-tile .c{font-size:.85rem}
+.od-lists{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:700px){.od-lists{grid-template-columns:1fr}}
+.od-list{border-radius:8px;padding:4px 14px}.od-list--good{background:#f1faf3}.od-list--bad{background:#fdf2f1}
+.od-charts{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+.od-table-wrap{overflow-x:auto}.od-table td.g{background:#d9f0d3}.od-table td.r{background:#f8d5d0}.od-table th{cursor:pointer;white-space:nowrap}
+.od-table td{font-variant-numeric:tabular-nums}
+</style>
+<script>
+  import { initOblastDashboard } from '@/lib/oblast-dashboard-client';
+  initOblastDashboard();
+</script>

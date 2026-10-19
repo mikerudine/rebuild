@@ -1,0 +1,9 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import OblastDashboard from '@/components/OblastDashboard.astro';
+const base = import.meta.env.BASE_URL;
+---
+<BaseLayout lang="uk" title="Івано-Франківська область: панель показників">
+  <h1>Івано-Франківська область: панель показників</h1>
+  <OblastDashboard lang="uk" base={base} slug="ivano-frankivsk" />
+</BaseLayout>
