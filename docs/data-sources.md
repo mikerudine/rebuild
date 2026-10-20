@@ -30,11 +30,22 @@ Dataset `mikerudine/rebuild-ukraine-hromada-growth` ("Ukraine Hromada Growth (re
 - Derzhstat SDMX transport flows (`DF_GROUND_TRANSPORT_A/Q/M`, `DF_INTEGRATED_INDICATORS_OF_TRANSPORT_STATISTICS`): oblast level only.
 - City GTFS: Mobility Database catalogue lists 11 UA feeds (Lviv, Uzhhorod, Stryi, Bucha, Odesa, Khmelnytskyi, Kyiv/Boryspil). Transitland API needs a key.
 
+## Education (UCEQA / УЦОЯО)
+- Person-level open data, `https://zno.testportal.com.ua/yearstat/uploads/OpenDataZNO{2016..2021}.7z` and `OpenDataNMT{2022..2025}.7z` (`;`-CSV; 2016/2019/2020 cp1251, the rest UTF-8). Only current-year school graduates are kept (`RegTypeName`).
+- Caveats: ZNO up to 2021 was compulsory for all graduates; NMT (from 2022, 2022 a weak wartime year) is only for applicants → like-for-like = 2023→2025. "Schools" = schools with ≥1 graduate test-taker (11th-grade schools only), not the whole network. MON/Derzhstat school & pupil counts are oblast-level only; EDEBO API closed.
+- Hromada match (map2.py): settlement name → KATOTTG, disambiguated by rayon / old raion; then EDEBO/EDRPOU ids (2025 only) and normalised school name across years; share of graduates mapped 89% (2016–22), 93–94% (2023–25).
+- Supabase: `rebuild.edu_nmt_school_year` (93,454 rows: year, school, settlement, edrpou/edeboid, hromada_code, match_method, graduates), `rebuild.edu_hromada_year` (13,977 rows: hromada × year graduates/schools, exam ZNO/NMT).
+
+## Housing
+- EDESSB (ЄДЕССБ) open data, data.gov.ua `24c0ce1c-…`: yearly JSON dumps, only **2021 and 2026** published; residential commissioning docs (declarations/certificates, DKBS 111x houses / 112x apartment blocks) with KATOTTG hromada code. No reliable area field. Amnesty declarations (legalising earlier builds) are kept separate.
+- Derzhstat SDMX `DF_BEGINING_COMPLETION_CONSTRUCTION`, indicator `AREA_DWELLINGS_RESIDEN_BUILD`: m² commissioned, quarterly **cumulative YTD**, 2018Q1–2026Q2, **oblast level only** (no raion/hromada in the flow despite the table name), split 111/112/total and urban/rural. From 2024 includes country/garden houses.
+- Supabase: `rebuild.housing_hromada_2021_2026` (1,357 hromadas; Jan–Sep counts of houses_new (non-amnesty), houses_newbuild (new construction only), houses_amnesty, apt_blocks, apt_blocks_amnesty for 2021 and 2026), `rebuild.housing_m2_raion_q` (4,424 rows: region_code, level, building_type, terrain, period, m2_ytd, m2_q).
+
 ## Blocked
 robota.ua (Cloudflare), OpenBudget, Ukrposhta (API needs a token). data.gov.ua **CKAN API now works** from the box (2026-10-19). mtu.gov.ua, uz.gov.ua, bus.com.ua unreachable; busfor.ua, booking.uz.gov.ua 403.
 No hromada-level population data found.
 
 ## Oblast dashboard tables (Supabase `rebuild`, RLS on, public read, writes revoked)
 - `rebuild.oblast_dashboard_kpi` — per oblast KPI: value, base, change %, national change %, source, as_of.
-- `rebuild.oblast_dashboard_hromada` — per hromada indicators (legal/FOP growth, composite, chain stores official/OSM, NP points/ratio/weekly net, OSM food counts).
+- `rebuild.oblast_dashboard_hromada` — per hromada indicators (legal/FOP growth, composite, chain stores official/OSM, NP points/ratio/weekly net, OSM food counts, NMT graduates 2023/2025 + %, new houses 2021/2026 + %, trips).
 - `rebuild.oblast_data_coverage` — per-oblast count of sources with data (used to choose the oblast).

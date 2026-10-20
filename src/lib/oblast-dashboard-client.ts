@@ -38,7 +38,7 @@ export async function initOblastDashboard() {
     const div = document.createElement('div');
     div.className = `od-tile ${k.good === true ? 'good' : k.good === false ? 'bad' : ''}`;
     const nat = k.national_change_pct === null ? '' : ` · ${uk ? 'Україна' : 'Ukraine'} ${sg(k.national_change_pct)}`;
-    div.innerHTML = `<div class="l">${uk ? k.label_uk : k.label_en}</div><div class="v">${fmt(k.value)}${k.unit ? ' ' + (uk ? k.unit : 'UAH') : ''}</div>
+    div.innerHTML = `<div class="l">${uk ? k.label_uk : k.label_en}</div><div class="v">${fmt(k.value)}${k.unit ? ' ' + (uk ? k.unit : ({ 'грн': 'UAH', 'м²': 'm²' } as Record<string, string>)[k.unit] ?? k.unit) : ''}</div>
       <div class="c">${k.change_pct === null ? k.base_label : `<b>${sg(k.change_pct)}</b> ${uk ? 'до' : 'vs'} ${k.base_label}${nat}`}</div>${k.note_uk ? `<div class="c n">${uk ? k.note_uk : k.note_en}</div>` : ''}`;
     tiles.append(div);
   }
@@ -58,6 +58,13 @@ export async function initOblastDashboard() {
       marks: [Plot.ruleY([100]), Plot.lineY(d, { x: 'year', y: 'index', stroke: 'm', strokeWidth: 2 }), Plot.dot(d, { x: 'year', y: 'index', fill: 'm', r: 2, tip: true })] }));
   } else if (tc) tc.closest('.chart-block')?.remove();
 
+  if (s.edu?.length) {
+    const b: Record<string, number> = {}; for (const r of s.edu) if (r.year === 2023) b[r.scope] = r.grads;
+    lines(root.querySelector('#od-c-edu'), s.edu.map((r: Row) => ({ ...r, index: Math.round((r.grads / b[r.scope]) * 1000) / 10 })), 'year', 'index', lang);
+  } else root.querySelector('#od-c-edu')?.closest('.chart-block')?.remove();
+  if (s.housing_m2?.length) lines(root.querySelector('#od-c-m2'), s.housing_m2, 'year', 'index', lang);
+  else root.querySelector('#od-c-m2')?.closest('.chart-block')?.remove();
+
   // hromada table
   const cols: [string, string, string, boolean][] = [
     ['name', 'Громада', 'Hromada', false], ['rayon', 'Район', 'Rayon', false],
@@ -65,6 +72,7 @@ export async function initOblastDashboard() {
     ['composite', 'Композит', 'Composite', true], ['stores_official', 'Магазини мереж (офіц.)', 'Chain stores (official)', true],
     ['stores_chg', 'Магазини OSM 21→26', 'OSM stores 21→26', true], ['np_now', 'Точки NP', 'NP points', true],
     ['np_ratio', 'NP зараз / до 2021', 'NP now / pre-2021', true], ['np_net_weeks', 'NP нетто за тижні', 'NP net, weeks', true],
+    ['grads_pct', 'Випускники НМТ 23→25, %', 'NMT graduates 23→25, %', true], ['houses_2026', 'Нові будинки 2026 (січ–вер)', 'New houses 2026 (Jan–Sep)', true], ['houses_pct', 'Нові будинки 21→26, %', 'New houses 21→26, %', true],
     ['trips_pct', 'Рейси/добу 19→26, %', 'Daily trips 19→26, %', true], ['routes_chg', 'Маршрути 19→26', 'Routes 19→26', true],
   ];
   const H: Row[] = data.hromadas;
