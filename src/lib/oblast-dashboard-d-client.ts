@@ -19,7 +19,10 @@ function put(id: string, node: Element) { const el = $(id); el.replaceChildren(n
 function bubbles(H: Any[], kp: Any) {
   const el = $('bub'); const w = W(el); const m = isMobile();
   const pts = H.filter((h) => h.leg_pct != null && h.grads_pct != null);
-  const rays = [...new Set(H.map((h) => h.rayon))].sort();
+  // raion key = KATOTTG raion part of the hromada code (e.g. UA2604); fixed order by code, so colours match across languages
+  const rk = (h: Any) => String(h.code).slice(0, 6);
+  const rays = [...new Set(H.map(rk))].sort();
+  const rname = Object.fromEntries(H.map((h) => [rk(h), h.rayon]));
   const top = new Set([...pts].sort((a, b) => b.fop_2025 - a.fop_2025).slice(0, m ? 2 : 3).map((h) => h.name));
   const lab = pts.filter((p) => top.has(p.name) || (!m && (Math.abs(p.grads_pct) > 38 || p.leg_pct > 25 || p.leg_pct < -3)) || (m && (p.leg_pct > 40 || p.grads_pct < -45)));
   const uaX = kp.reg_leg_ent.national_change_pct, uaY = kp.edu_grads.national_change_pct;
@@ -35,12 +38,12 @@ function bubbles(H: Any[], kp: Any) {
       Plot.ruleY([uaY], { stroke: '#7c5cff', strokeDasharray: '4 4' }),
       Plot.text([uaX], { x: (d: number) => d, frameAnchor: 'top', dx: 4, textAnchor: 'start', text: () => `${L('UA юрособи', 'UA legal ent.')} ${pct(uaX)}`, fill: '#a08cff' }),
       Plot.text([uaY], { y: (d: number) => d, frameAnchor: 'right', dy: -7, textAnchor: 'end', text: () => `${L('UA випускники', 'UA graduates')} ${pct(uaY)}`, fill: '#a08cff' }),
-      Plot.dot(pts, { x: 'leg_pct', y: 'grads_pct', r: 'fop_2025', fill: 'rayon', fillOpacity: 0.55, stroke: 'rayon', sort: { channel: '-r' },
+      Plot.dot(pts, { x: 'leg_pct', y: 'grads_pct', r: 'fop_2025', fill: rk, fillOpacity: 0.55, stroke: rk, sort: { channel: '-r' },
         title: (d: Any) => `${d.name} (${d.rayon})\n${L('юрособи', 'legal ent.')} ${pct(d.leg_pct)} · ${L('випускники', 'graduates')} ${pct(d.grads_pct)} · ${L('ФОП', 'FOP')} ${num(d.fop_2025)}` , tip: true }),
       Plot.text(lab, { x: 'leg_pct', y: 'grads_pct', text: 'name', dy: -14, fill: '#ddd', fontSize: m ? 10 : 11 }),
     ],
   }));
-  $('bubl').innerHTML = rays.map((r, i) => `<span><i style="background:${PAL[i]}"></i>${r}</span>`).join('') + `<span>· ${pts.length} ${L('з', 'of')} ${H.length} ${L('громад (у решти немає даних НМТ)', 'hromadas (no NMT data for the rest)')}</span>`;
+  $('bubl').innerHTML = rays.map((r, i) => `<span><i style="background:${PAL[i % PAL.length]}"></i>${rname[r]}</span>`).join('') + `<span>· ${pts.length} ${L('з', 'of')} ${H.length} ${L('громад (у решти немає даних НМТ)', 'hromadas (no NMT data for the rest)')}</span>`;
 }
 
 function radar(kp: Any) {
