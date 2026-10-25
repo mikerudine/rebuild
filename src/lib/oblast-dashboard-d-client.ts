@@ -158,6 +158,10 @@ export async function initOblastDashboardD() {
   const kp: Any = Object.fromEntries(D.kpis.map((k: Any) => [k.kpi, k]));
   // Drop raion-level rows (KATOTTG 3rd level 0000000) that slipped into the hromada list
   const H: Any[] = D.hromadas;
+  if (LANG === 'en' && ex.names_en) {
+    const tr = (o: Any) => { const e = ex.names_en[o.code]; if (e) { o.name = e.name || o.name; o.rayon = e.rayon || o.rayon; } };
+    H.forEach(tr); (ex.schools || []).forEach(tr);
+  }
   $('wfn').textContent = String(ex.routes_base.routes - ex.routes_end.routes);
   $('asof').textContent = new Date(D.generated).toLocaleDateString(LOC, { month: 'long', year: 'numeric' });
   $('hs').innerHTML = (LANG === 'en' ? [['reg_indiv_ent', 'FOPs'], ['house_new', 'new houses'], ['edu_grads', 'NMT graduates'], ['tr_trips', 'daily bus trips']] : [['reg_indiv_ent', 'ФОП'], ['house_new', 'нових будинків'], ['edu_grads', 'випускників на НМТ'], ['tr_trips', 'рейсів на добу']]).map(([k, c]) => {
