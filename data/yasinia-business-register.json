@@ -1,0 +1,41 @@
+{
+  "source": {
+    "provider": "Derzhstat (SSSU) SDMX API",
+    "dataflow_id": "DF_STATISTICAL_BUSINESS_REGISTER_A",
+    "dataflow_title": "Statistical Business Register (annual): active enterprises, legal entities, sole proprietors",
+    "query_url": "https://stat.gov.ua/sdmx/workspaces/default:integration/registry/sdmx/2.1/data/DF_STATISTICAL_BUSINESS_REGISTER_A/REG_LEG_ENT+ACT_ENTRP.UA21060070000049340....?startPeriod=2021",
+    "region_katottg": "UA21060070000049340",
+    "region_name_uk": "Ясіняська територіальна громада",
+    "license": "Official statistics; cite Derzhstat and link to source query"
+  },
+  "fetched_at": "2026-10-25T20:10:45.693Z",
+  "series": [
+    {
+      "indicator": "REG_LEG_ENT",
+      "indicator_label_uk": "Зареєстровані юридичні особи (усього)",
+      "unit": "entities",
+      "observations": [
+        {
+          "year": 2021,
+          "value": 196
+        },
+        {
+          "year": 2022,
+          "value": 202
+        },
+        {
+          "year": 2023,
+          "value": 213
+        },
+        {
+          "year": 2024,
+          "value": 218
+        },
+        {
+          "year": 2025,
+          "value": 224
+        }
+      ]
+    }
+  ]
+}
