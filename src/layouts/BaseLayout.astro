@@ -8,9 +8,10 @@ interface Props {
   lang: Lang;
   title: string;
   description?: string;
+  wide?: boolean;
 }
 
-const { lang, title, description } = Astro.props;
+const { lang, title, description, wide } = Astro.props;
 const t = getUi(lang);
 const otherLang = lang === 'uk' ? 'en' : 'uk';
 const pageTitle = `${title} · ${t.siteName}`;
@@ -64,7 +65,7 @@ const path = Astro.url.pathname;
         </a>
       </div>
     </header>
-    <main>
+    <main class={wide ? 'main--wide' : undefined}>
       <slot />
     </main>
     <footer class="site-footer">

@@ -1,9 +1,8 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import OblastDashboard from '@/components/OblastDashboard.astro';
+import OblastDashboardD from '@/components/OblastDashboardD.astro';
 const base = import.meta.env.BASE_URL;
 ---
-<BaseLayout lang="en" title="Ivano-Frankivsk oblast: KPI dashboard">
-  <h1>Ivano-Frankivsk oblast: KPI dashboard</h1>
-  <OblastDashboard lang="en" base={base} slug="ivano-frankivsk" />
+<BaseLayout lang="en" title="Ivano-Frankivsk oblast: regional profile" wide>
+  <OblastDashboardD lang="en" base={base} slug="ivano-frankivsk" />
 </BaseLayout>
