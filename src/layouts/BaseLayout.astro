@@ -65,6 +65,7 @@ const path = Astro.url.pathname;
         </a>
       </div>
     </header>
+    <script is:inline>(function(){var n=document.querySelector('.site-nav'),a=n&&n.querySelector('[aria-current]');if(n&&a&&n.scrollWidth>n.clientWidth)n.scrollLeft=a.offsetLeft-n.offsetLeft-16;})();</script>
     <main class={wide ? 'main--wide' : undefined}>
       <slot />
     </main>
