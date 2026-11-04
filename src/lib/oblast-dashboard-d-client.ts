@@ -48,8 +48,10 @@ function bubbles(H: Any[], kp: Any) {
 
 function radar(kp: Any) {
   const el = $('rad'); const s = Math.min(W(el), 400); const m = isMobile();
-  const ks = ['reg_leg_ent', 'reg_indiv_ent', 'workua_salary', 'atb_corrected', 'horeca_osm', 'edu_grads', 'edu_schools', 'house_m2'];
-  const lab = LANG === 'en' ? ['Legal ent.', 'FOP', 'Salary', 'ATB', 'Food venues', 'Graduates', 'Schools', 'Housing m²'] : ['Юрособи', 'ФОП', 'Зарплата', 'АТБ', 'Заклади харч.', 'Випускники', 'Школи', 'м² житла'];
+  const ks0 = ['reg_leg_ent', 'reg_indiv_ent', 'workua_salary', 'atb_corrected', 'horeca_osm', 'edu_grads', 'edu_schools', 'house_m2'];
+  const lab0 = LANG === 'en' ? ['Legal ent.', 'FOP', 'Salary', 'ATB', 'Food venues', 'Graduates', 'Schools', 'Housing m²'] : ['Юрособи', 'ФОП', 'Зарплата', 'АТБ', 'Заклади харч.', 'Випускники', 'Школи', 'м² житла'];
+  const ok = ks0.map((k) => kp[k] && kp[k].change_pct != null && kp[k].national_change_pct != null);
+  const ks = ks0.filter((_, i) => ok[i]), lab = lab0.filter((_, i) => ok[i]);
   const lo = -20, hi = 50, R = 1, rr = (v: number) => (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo) * R;
   const ang = (i: number) => -Math.PI / 2 + i * 2 * Math.PI / ks.length;
   const pt = (v: number, i: number) => ({ x: rr(v) * Math.cos(ang(i)), y: rr(v) * Math.sin(ang(i)) });
@@ -165,14 +167,18 @@ export async function initOblastDashboardD() {
     const tr = (o: Any) => { const e = ex.names_en[o.code]; if (e) { o.name = e.name || o.name; o.rayon = e.rayon || o.rayon; } };
     H.forEach(tr); (ex.schools || []).forEach(tr);
   }
-  $('wfn').textContent = String(ex.routes_base.routes - ex.routes_end.routes);
+  const hasRoutes = !!(ex.routes_base && ex.routes_end && ex.route_events);
+  const hasTrips = H.some((h) => h.trips_2019 != null && h.trips_pct != null);
+  if (hasRoutes) $('wfn').textContent = String(ex.routes_base.routes - ex.routes_end.routes); else $('wfc')?.remove();
+  if (!hasTrips) $('dbt')?.remove();
+  if (!hasRoutes) $('his')?.parentElement?.classList.replace('s6', 's12');
   $('asof').textContent = new Date(D.generated).toLocaleDateString(LOC, { month: 'long', year: 'numeric' });
-  $('hs').innerHTML = (LANG === 'en' ? [['reg_indiv_ent', 'FOPs'], ['house_new', 'new houses'], ['edu_grads', 'NMT graduates'], ['tr_trips', 'daily bus trips']] : [['reg_indiv_ent', 'ФОП'], ['house_new', 'нових будинків'], ['edu_grads', 'випускників на НМТ'], ['tr_trips', 'рейсів на добу']]).map(([k, c]) => {
+  $('hs').innerHTML = (LANG === 'en' ? [['reg_indiv_ent', 'FOPs'], ['house_new', 'new houses'], ['edu_grads', 'NMT graduates'], ['tr_trips', 'daily bus trips'], ['horeca_fop', 'HoReCa FOPs']] : [['reg_indiv_ent', 'ФОП'], ['house_new', 'нових будинків'], ['edu_grads', 'випускників на НМТ'], ['tr_trips', 'рейсів на добу'], ['horeca_fop', 'ФОП у HoReCa']]).filter(([k]) => kp[k] && kp[k].change_pct != null).slice(0, 4).map(([k, c]) => {
     const t = kp[k]; return `<div><b style="color:${t.good ? 'var(--a)' : 'var(--p)'}">${pct(t.change_pct)}</b><span>${c} · ${t.base_label}→${LANG === 'en' ? String(t.as_of).replace('січ–вер', 'Jan–Sep').replace('(останній знімок)', '(latest snapshot)') : t.as_of}${t.national_change_pct != null ? ' · ' + L('Україна', 'Ukraine') + ' ' + pct(t.national_change_pct) : ''}</span></div>`;
   }).join('');
   let mode = 'schools';
   const safe = (f: () => void) => { try { f(); } catch (e) { console.error(e); } };
-  const draw = () => { safe(() => bubbles(H, kp)); safe(() => radar(kp)); safe(() => histogram(H, kp, D.medians.fop_pct)); safe(() => waterfall(ex)); safe(() => donut(D.series)); safe(() => dumbbell(H, ex, mode)); };
+  const draw = () => { safe(() => bubbles(H, kp)); safe(() => radar(kp)); safe(() => histogram(H, kp, D.medians.fop_pct)); if (hasRoutes) safe(() => waterfall(ex)); safe(() => donut(D.series)); safe(() => dumbbell(H, ex, mode)); };
   document.querySelectorAll<HTMLButtonElement>('.tabs button').forEach((b) => b.addEventListener('click', () => {
     mode = b.dataset.m!; document.querySelectorAll('.tabs button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); dumbbell(H, ex, mode);
   }));

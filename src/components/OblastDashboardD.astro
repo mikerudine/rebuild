@@ -1,9 +1,14 @@
 ---
 interface Props { lang: 'uk' | 'en'; base: string; slug: string }
 const { lang, base, slug } = Astro.props;
+const OBL: Record<string, { uk: string[]; en: string[]; nuk: string; nen: string }> = {
+  'ivano-frankivsk': { uk: ['Івано-', 'Франківщина '], en: ['Ivano-', 'Frankivsk oblast '], nuk: 'Івано-Франківська', nen: 'Ivano-Frankivsk' },
+  lviv: { uk: ['', 'Львівщина '], en: ['', 'Lviv oblast '], nuk: 'Львівська', nen: 'Lviv' },
+};
+const O = OBL[slug];
 const T = {
   uk: {
-    kick: 'Регіональний профіль', h1: ['Івано-', 'Франківщина ', 'росте', 'не всюди однаково'],
+    kick: 'Регіональний профіль', h1: [O.uk[0], O.uk[1], 'росте', 'не всюди однаково'],
     bub: 'Громади: бізнес × освіта', bubN: 'X — зміна кількості юросіб 2021→2025, Y — зміна кількості випускників на НМТ 2023→2025. Розмір — кількість ФОП, колір — район. Пунктири — Україна.',
     rad: 'Область проти України', radN: 'Зміна показника від базового року, %', obl: 'область', ua: 'Україна',
     his: 'Як розподілені громади за ростом ФОП', hisN: 'Кількість громад за зміною кількості ФОП, 2021→2025',
@@ -13,7 +18,7 @@ const T = {
     src: 'Джерела: Держстат, ЄДЕССБ, УЦОЯО (НМТ), Укртрансбезпека, work.ua, OSM/АТБ.', meth: 'Методологія',
   },
   en: {
-    kick: 'Regional profile', h1: ['Ivano-', 'Frankivsk oblast ', 'grows', 'but not evenly'],
+    kick: 'Regional profile', h1: [O.en[0], O.en[1], 'grows', 'but not evenly'],
     bub: 'Hromadas: business × education', bubN: 'X — change in legal entities 2021→2025, Y — change in NMT graduates 2023→2025. Size — number of FOPs, colour — raion. Dashed lines — Ukraine.',
     rad: 'Oblast vs Ukraine', radN: 'Change since base year, %', obl: 'oblast', ua: 'Ukraine',
     his: 'How hromadas spread by FOP growth', hisN: 'Number of hromadas by change in sole proprietors (FOP), 2021→2025',
@@ -27,14 +32,15 @@ const mpath = lang === 'uk' ? `${base}methodology/` : `${base}en/methodology/`;
 ---
 <div class="od" id="pd" data-base={base} data-lang={lang} data-slug={slug}>
 <div class="w">
-  <div class="hd"><div><div class="k">{T.kick} · <span id="asof"></span></div><h1>{T.h1[0]}<br/>{T.h1[1]}<em>{T.h1[2]}</em><br/>{T.h1[3]}</h1></div><div class="hs" id="hs"></div></div>
+  <div class="hd"><div><div class="k">{T.kick} · <span id="asof"></span></div><h1>{T.h1[0] && <>{T.h1[0]}<br/></>}{T.h1[1]}<em>{T.h1[2]}</em><br/>{T.h1[3]}</h1></div><div class="hs" id="hs"></div></div>
+  <nav class="ob">{Object.entries(OBL).map(([k, o]) => <a href={`${lang === 'uk' ? base : base + 'en/'}oblast/${k}/`} aria-current={k === slug ? 'page' : undefined}>{lang === 'uk' ? o.nuk : o.nen}</a>)}</nav>
   <div class="g">
     <div class="c s8"><h3>{T.bub}</h3><div class="n">{T.bubN}</div><div class="ch" id="bub"></div><div class="lg" id="bubl"></div></div>
     <div class="c s4"><h3>{T.rad}</h3><div class="n">{T.radN}</div><div class="ch" id="rad"></div><div class="lg"><span><i style="background:var(--a)"></i>{T.obl}</span><span><i style="background:var(--b)"></i>{T.ua}</span></div></div>
     <div class="c s6"><h3>{T.his}</h3><div class="n">{T.hisN}</div><div class="ch" id="his"></div></div>
-    <div class="c s6"><h3>{T.wf} <span id="wfn"></span></h3><div class="n">{T.wfN}</div><div class="ch" id="wf"></div></div>
+    <div class="c s6" id="wfc"><h3>{T.wf} <span id="wfn"></span></h3><div class="n">{T.wfN}</div><div class="ch" id="wf"></div></div>
     <div class="c s4"><h3>{T.dn}</h3><div class="n">{T.dnN}</div><div class="ch" id="dn"></div><div class="lg"><span><i style="background:var(--a)"></i>{T.dnL[0]}</span><span><i style="background:var(--u)"></i>{T.dnL[1]}</span><span><i style="background:var(--p)"></i>{T.dnL[2]}</span></div></div>
-    <div class="c s8"><h3>{T.db}</h3><div class="tabs"><button data-m="schools" aria-pressed="true">{T.tabs[0]}</button><button data-m="trips" aria-pressed="false">{T.tabs[1]}</button></div><div class="n" id="dbn"></div><div class="ch" id="db"></div><div class="lg"><span><i style="background:#8e8ea6"></i>{T.dbL[0]}</span><span><i style="background:var(--a)"></i>{T.dbL[1]}</span><span><i style="background:var(--p)"></i>{T.dbL[2]}</span></div></div>
+    <div class="c s8"><h3>{T.db}</h3><div class="tabs" id="dbt"><button data-m="schools" aria-pressed="true">{T.tabs[0]}</button><button data-m="trips" aria-pressed="false">{T.tabs[1]}</button></div><div class="n" id="dbn"></div><div class="ch" id="db"></div><div class="lg"><span><i style="background:#8e8ea6"></i>{T.dbL[0]}</span><span><i style="background:var(--a)"></i>{T.dbL[1]}</span><span><i style="background:var(--p)"></i>{T.dbL[2]}</span></div></div>
   </div>
   <p class="src">{T.src} <a href={mpath}>{T.meth}</a></p>
 </div>
@@ -53,10 +59,11 @@ const mpath = lang === 'uk' ? `${base}methodology/` : `${base}en/methodology/`;
 .od .g{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
 .od .c{background:var(--c);border:1px solid var(--ln);border-radius:20px;padding:20px 22px;min-width:0}
 .od .c h3{margin:0;font-size:18px;color:var(--tx)}.od .c .n{color:var(--mu);font-size:12px;margin:4px 0 12px}
-.od .s8{grid-column:span 8}.od .s6{grid-column:span 6}.od .s4{grid-column:span 4}
+.od .s8{grid-column:span 8}.od .s6{grid-column:span 6}.od .s4{grid-column:span 4}.od .s12{grid-column:span 12}
 .od .ch svg{max-width:100%;height:auto;overflow:visible}
 .od .lg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11px;color:var(--mu);margin-top:8px}.od .lg i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
 .od .tabs{display:flex;gap:6px;margin:-4px 0 10px;flex-wrap:wrap}.od .tabs button{background:#ffffff0a;border:1px solid var(--ln);color:var(--mu);border-radius:99px;padding:4px 12px;font:inherit;font-size:12px;cursor:pointer}.od .tabs button[aria-pressed=true]{background:var(--a);color:#0a0a12;border-color:var(--a)}
+.od .ob{display:flex;flex-wrap:wrap;gap:8px;margin:-10px 0 22px}.od .ob a{color:var(--mu);border:1px solid var(--ln);border-radius:99px;padding:4px 12px;font-size:12px;text-decoration:none}.od .ob a[aria-current=page]{color:#0a0a12;background:var(--a);border-color:var(--a)}
 .od .src{color:var(--mu);font-size:11px;margin:26px 0 0}.od .src a{color:var(--u)}
 @media(max-width:760px){.od .w{padding:20px 14px 32px}.od h1{font-size:44px}.od .hd{grid-template-columns:1fr;gap:18px}.od .g{grid-template-columns:1fr}.od .g>*{grid-column:auto}.od .hs b{font-size:26px}.od .c{padding:16px 14px}}
 </style>
