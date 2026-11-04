@@ -28,6 +28,7 @@ const T = {
     src: 'Sources: Derzhstat, EDESSB, UCEQA (NMT), Ukrtransbezpeka, work.ua, OSM/ATB.', meth: 'Methodology',
   },
 }[lang];
+if (slug !== 'ivano-frankivsk') T.src = T.src.replace(', Укртрансбезпека', '').replace(', Ukrtransbezpeka', '');
 const mpath = lang === 'uk' ? `${base}methodology/` : `${base}en/methodology/`;
 ---
 <div class="od" id="pd" data-base={base} data-lang={lang} data-slug={slug}>
