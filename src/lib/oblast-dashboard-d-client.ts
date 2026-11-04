@@ -141,10 +141,11 @@ function dumbbell(H: Any[], ex: Any, mode: string) {
     $('dbn').textContent = L('Автобусні рейси на добу, 2019 → 2026. Громади з найбільшою кількістю рейсів у 2019', 'Daily bus trips, 2019 → 2026. Hromadas with the most trips in 2019');
   }
   rows.forEach((r) => { r.d = r.b - r.a; r.col = r.d > 0 ? '#c6f432' : r.d < 0 ? '#ff4d8d' : '#8e8ea6'; r.t = (r.d > 0 ? '+' : r.d < 0 ? '−' : '±') + Math.abs(r.d); });
-  const useLog = mode === 'trips';
+  const mx = d3.max(rows, (r: Any) => Math.max(r.a, r.b)) || 1, md = d3.median(rows, (r: Any) => Math.max(r.a, r.b)) || 1;
+  const useLog = mode === 'trips'; const useSym = mode === 'schools' && mx > 6 * md;
   put('db', Plot.plot({
     width: w, height: rows.length * 24 + 40, style, marginLeft: m ? 118 : 150, marginRight: 46,
-    x: { type: useLog ? 'log' : 'linear', grid: true, label: mode === 'schools' ? L('шкіл', 'schools') : L('рейсів на добу (лог. шкала)', 'daily trips (log scale)') },
+    x: { type: useLog ? 'log' : useSym ? 'symlog' : 'linear', ...(useSym ? { ticks: [0, 2, 5, 10, 20, 50, 100, 200].filter((v) => v <= mx * 1.2) } : {}), grid: true, label: mode === 'schools' ? (useSym ? L('шкіл (стиснута шкала)', 'schools (compressed scale)') : L('шкіл', 'schools')) : L('рейсів на добу (лог. шкала)', 'daily trips (log scale)') },
     y: { domain: rows.map((r) => r.n), label: null },
     marks: [
       Plot.ruleY(rows, { y: 'n', x1: 'a', x2: 'b', stroke: 'col', strokeWidth: 4, strokeOpacity: 0.6, strokeLinecap: 'round' }),
